@@ -1504,7 +1504,7 @@
             + Add Income Source
           </button>
           <button class="btn btn-main" id="addExpenseBtn">+ Add Expense</button>
-          <button class="btn btn-main" id="exportBtn">Export Excel</button>
+          <button class="btn btn-main" id="exportBtn">Export</button>
           <button class="btn btn-main" id="importBtn">Import</button>
           <button class="btn btn-calc" id="calculateBtn">
             Calculate Balance
@@ -3953,168 +3953,25 @@
       }
 
       function exportData() {
-        const monthData = getCurrentMonthData();
-        const rows = [
-          [
-            "Section",
-            "Type",
-            "Name",
-            "Amount1",
-            "Amount2",
-            "Amount3",
-            "Category",
-            "TermType",
-            "Note",
-            "Date",
-            "Rate",
-          ],
-        ];
+        syncFromDOM();
 
-        (monthData.incomes || []).forEach((item) => {
-          rows.push([
-            "spending",
-            "Income",
-            item.name,
-            item.amount,
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-          ]);
+        const backup = {
+          app: "NutriFinance",
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          selectedMonth: getCurrentMonthKey(),
+          data: store,
+        };
+
+        const json = JSON.stringify(backup, null, 2);
+        const blob = new Blob([json], {
+          type: "application/json;charset=utf-8;",
         });
-
-        (monthData.expenses || []).forEach((item) => {
-          rows.push([
-            "spending",
-            "Expense",
-            item.name,
-            item.amount,
-            "",
-            "",
-            item.category,
-            "",
-            item.note || "",
-            "",
-            "",
-          ]);
-        });
-
-        (monthData.assets || []).forEach((item) => {
-          rows.push([
-            "networth",
-            "Asset",
-            item.name,
-            item.amount,
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-          ]);
-        });
-
-        (monthData.liabilities || []).forEach((item) => {
-          rows.push([
-            "networth",
-            "Liability",
-            item.name,
-            item.amount,
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-          ]);
-        });
-
-        (monthData.portfolio || []).forEach((item) => {
-          rows.push([
-            "portfolio",
-            "Investment",
-            item.name,
-            item.invested,
-            item.currentValue,
-            item.years,
-            "",
-            "",
-            item.note || "",
-            "",
-            "",
-          ]);
-        });
-
-        (monthData.debts || []).forEach((item) => {
-          rows.push([
-            "debt",
-            "Utang",
-            item.name,
-            item.balance,
-            item.termValue,
-            item.extraPayment,
-            "",
-            item.termType || "months",
-            item.addToExpenses ? "ADD_TO_EXPENSES" : "",
-            item.startDate || "",
-            item.interestRate,
-          ]);
-        });
-
-        rows.push([
-          "meta",
-          "SavingsTarget",
-          "",
-          monthData.savingsTarget || "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-        ]);
-
-        rows.push([
-          "meta",
-          "SavingsCalc",
-          "",
-          monthData.savingsCalc?.goal || "",
-          monthData.savingsCalc?.current || "",
-          monthData.savingsCalc?.monthly || "",
-          "",
-          "",
-          "",
-          "",
-          monthData.savingsCalc?.annualRate || "",
-        ]);
-
-        rows.push([
-          "meta",
-          "CurrencyConverter",
-          monthData.currencyConverter?.from || "AED",
-          monthData.currencyConverter?.amount || "",
-          "",
-          "",
-          monthData.currencyConverter?.to || "USD",
-          "",
-          "",
-          "",
-          monthData.currencyConverter?.rate || "",
-        ]);
-
-        const csv = rows.map((row) => row.map(csvEscape).join(",")).join("\n");
-        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement("a");
         a.href = url;
-        a.download = `nutrifinance_${getCurrentMonthKey()}.csv`;
+        a.download = `nutrifinance_backup_${getCurrentMonthKey()}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
