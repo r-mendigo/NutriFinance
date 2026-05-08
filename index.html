@@ -1,0 +1,4409 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NutriFinance - Mindful Spending</title>
+    <style>
+      :root {
+        --bg-1: #eef7ee;
+        --bg-2: #dff2ea;
+        --bg-3: #eef0ff;
+        --card: rgba(255, 251, 243, 0.94);
+        --card-2: rgba(247, 255, 251, 0.94);
+        --gold: #d4af37;
+        --gold-2: #f1d77a;
+        --gold-3: #fff3b3;
+        --emerald: #0f8b6d;
+        --emerald-dark: #0b6a54;
+        --emerald-soft: #d8f3e8;
+        --blue: #2f6db3;
+        --blue-dark: #1d4f87;
+        --violet: #7a5cff;
+        --rose: #d85e7f;
+        --text: #1b2430;
+        --muted: #5d6778;
+        --danger: #b84d4d;
+        --warning: #c97f1f;
+        --white: #ffffff;
+        --border: #dbcfae;
+        --shadow: 0 14px 30px rgba(20, 30, 40, 0.12);
+        --radius: 20px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        color: var(--text);
+        min-height: 100vh;
+        padding: 28px 18px 48px;
+        background:
+          radial-gradient(
+            circle at 12% 18%,
+            rgba(212, 175, 55, 0.22) 0%,
+            transparent 22%
+          ),
+          radial-gradient(
+            circle at 88% 14%,
+            rgba(15, 139, 109, 0.2) 0%,
+            transparent 24%
+          ),
+          radial-gradient(
+            circle at 52% 78%,
+            rgba(47, 109, 179, 0.13) 0%,
+            transparent 28%
+          ),
+          linear-gradient(
+            135deg,
+            var(--bg-1) 0%,
+            var(--bg-2) 42%,
+            var(--bg-3) 100%
+          );
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.5) 1px,
+            transparent 1.3px
+          ),
+          radial-gradient(
+            circle,
+            rgba(255, 222, 120, 0.26) 1px,
+            transparent 1.4px
+          ),
+          radial-gradient(
+            circle,
+            rgba(120, 255, 220, 0.12) 1px,
+            transparent 1.3px
+          );
+        background-size:
+          42px 42px,
+          72px 72px,
+          90px 90px;
+        opacity: 0.55;
+        animation: shimmerDrift 16s linear infinite;
+      }
+
+      @keyframes shimmerDrift {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      .top-brand {
+        max-width: 1380px;
+        margin: 0 auto 24px;
+        text-align: center;
+      }
+
+      .brand-glow {
+        display: inline-block;
+        position: relative;
+        padding: 8px 20px 12px;
+        border-radius: 999px;
+        background: radial-gradient(
+          circle at 50% 45%,
+          rgba(255, 244, 180, 0.95),
+          rgba(255, 233, 140, 0.2) 42%,
+          transparent 70%
+        );
+        box-shadow:
+          0 0 18px rgba(255, 225, 120, 0.35),
+          0 0 40px rgba(212, 175, 55, 0.22);
+      }
+
+      .top-brand h1 {
+        font-size: 2.35rem;
+        font-weight: 900;
+        letter-spacing: 0.4px;
+        background: linear-gradient(
+          180deg,
+          #fff7cc 0%,
+          #f3d86a 35%,
+          #c69212 70%,
+          #fff0a3 100%
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        text-shadow:
+          0 0 10px rgba(255, 224, 115, 0.25),
+          0 0 22px rgba(212, 175, 55, 0.18);
+      }
+
+      .top-brand p {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .app-shell {
+        max-width: 1380px;
+        margin: 20px auto 0;
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 22px;
+        align-items: start;
+      }
+
+      .panel,
+      .tracker-card {
+        background: var(--card);
+        border: 1px solid rgba(212, 175, 55, 0.26);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(8px);
+      }
+
+      .panel {
+        padding: 20px;
+        position: sticky;
+        top: 16px;
+      }
+
+      .tracker-card {
+        padding: 20px;
+      }
+
+      .panel h2,
+      .tracker-card h2 {
+        font-size: 1.7rem;
+        margin-bottom: 12px;
+      }
+
+      .gold-line {
+        height: 4px;
+        width: 84px;
+        border-radius: 999px;
+        background: linear-gradient(
+          90deg,
+          var(--gold),
+          var(--gold-2),
+          var(--gold-3)
+        );
+        margin-bottom: 16px;
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+      }
+
+      .summary-box,
+      .mini-card,
+      .compare-card,
+      .totals-chip,
+      .section-shell {
+        position: relative;
+        inset: auto;
+        opacity: 1;
+        visibility: visible;
+        z-index: auto;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.97),
+          rgba(245, 255, 250, 0.95)
+        );
+        border: 1px solid rgba(212, 175, 55, 0.18);
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(20, 30, 40, 0.06);
+      }
+
+      .guide-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(16, 24, 40, 0.34);
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.25s ease,
+          visibility 0.25s ease;
+        z-index: 80;
+      }
+
+      .guide-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .guide-drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: min(480px, 92vw);
+        height: 100vh;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 251, 243, 0.98),
+          rgba(244, 255, 249, 0.98)
+        );
+        border-left: 1px solid rgba(212, 175, 55, 0.28);
+        box-shadow: -16px 0 40px rgba(20, 30, 40, 0.18);
+        backdrop-filter: blur(12px);
+        transform: translateX(100%);
+        transition: transform 0.28s ease;
+        z-index: 90;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .guide-drawer.open {
+        transform: translateX(0);
+      }
+
+      .guide-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 18px 18px 14px;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.88),
+          rgba(251, 255, 252, 0.84)
+        );
+      }
+
+      .guide-header h3 {
+        font-size: 1.15rem;
+        margin-bottom: 5px;
+      }
+
+      .guide-header p {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .guide-close {
+        min-width: 42px;
+        min-height: 42px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        color: white;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, #be5757, #974040);
+      }
+
+      .guide-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 18px 24px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .guide-section {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.97),
+          rgba(246, 255, 250, 0.95)
+        );
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 16px;
+        padding: 14px;
+      }
+
+      .guide-section h4 {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+        color: var(--emerald-dark);
+      }
+
+      .guide-stat {
+        font-size: 1rem;
+        font-weight: 900;
+        line-height: 1.4;
+        margin-bottom: 8px;
+      }
+
+      .guide-note {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .guide-list {
+        margin-top: 8px;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .guide-list li + li {
+        margin-top: 6px;
+      }
+
+      .chart-wrap,
+      .compare-wrap,
+      .portfolio-wrap,
+      .networth-wrap,
+      .investment-growth-wrap {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 253, 248, 0.95),
+          rgba(248, 255, 251, 0.95)
+        );
+        border: 1px solid #ead9a4;
+        border-radius: 16px;
+      }
+
+      .summary-box {
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+
+      .summary-box h3 {
+        font-size: 0.92rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      .summary-value {
+        font-size: 1.2rem;
+        font-weight: 900;
+        line-height: 1.3;
+      }
+
+      .income-text {
+        color: var(--emerald);
+      }
+      .expense-text {
+        color: var(--danger);
+      }
+      .balance-text {
+        color: var(--blue);
+      }
+      .warning-text {
+        color: var(--warning);
+      }
+
+      .report-list {
+        margin-top: 8px;
+        max-height: 220px;
+        overflow-y: auto;
+        padding-right: 4px;
+      }
+
+      .report-item {
+        background: white;
+        border: 1px solid #efe3bd;
+        border-left: 5px solid var(--gold);
+        border-radius: 12px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+      }
+
+      .report-item strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .report-sub {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .report-note {
+        font-size: 0.84rem;
+        color: #705e2f;
+        margin-top: 3px;
+      }
+
+      .report-amount {
+        margin-top: 5px;
+        font-weight: 800;
+      }
+
+      .insight-box {
+        margin-top: 12px;
+        padding: 14px;
+        border-radius: 16px;
+        background: linear-gradient(180deg, #f2fff8, #ecfbf3);
+        border: 1px solid #cfe8d9;
+      }
+
+      .insight-box h3 {
+        color: var(--emerald-dark);
+        margin-bottom: 10px;
+        font-size: 1rem;
+      }
+
+      .insight-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .insight-item {
+        padding: 10px 11px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(15, 139, 109, 0.12);
+        font-size: 0.9rem;
+        line-height: 1.34;
+      }
+
+      .section-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin: 16px 0 10px;
+      }
+
+      .entry-row {
+        display: grid;
+        grid-template-columns: 1.25fr 0.85fr 0.95fr 1.15fr auto;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+      }
+
+      .simple-row {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr auto;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+      }
+
+      .portfolio-row {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr 0.85fr 0.7fr 1.1fr auto;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+      }
+
+      .debt-row {
+        display: grid;
+        grid-template-columns: 1.15fr 0.95fr 0.8fr 0.7fr 0.85fr 0.95fr auto;
+        gap: 10px;
+        margin-bottom: 16px;
+        align-items: center;
+        padding: 14px;
+        border-radius: 18px;
+        background: linear-gradient(
+          180deg,
+          rgba(247, 255, 251, 0.96),
+          rgba(255, 252, 244, 0.94)
+        );
+        border: 1px solid rgba(212, 175, 55, 0.2);
+      }
+
+      .debt-secondary-row {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1.1fr 1.4fr auto;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .debt-helper-note {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .debt-toggle-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: flex-start;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid rgba(47, 109, 179, 0.18);
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--blue-dark);
+      }
+
+      .debt-toggle-wrap input {
+        width: 18px;
+        height: 18px;
+        padding: 0;
+        margin: 0;
+      }
+
+      .debt-loan-cards {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .debt-loan-card {
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.92);
+        border: 2px solid rgba(29, 79, 135, 0.9);
+      }
+
+      .debt-loan-card h4 {
+        font-size: 0.82rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      .debt-loan-card p {
+        font-size: 0.98rem;
+        font-weight: 900;
+        color: var(--text);
+      }
+
+      .debt-results-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .debt-breakdown-wrap {
+        margin-top: 14px;
+        padding: 15px;
+        border-radius: 16px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 253, 248, 0.95),
+          rgba(248, 255, 251, 0.95)
+        );
+        border: 1px solid #ead9a4;
+      }
+
+      .debt-breakdown-head,
+      .debt-breakdown-row {
+        display: grid;
+        grid-template-columns: 1.1fr 0.85fr 0.8fr 0.8fr 0.9fr 0.9fr;
+        gap: 10px;
+        align-items: start;
+      }
+
+      .debt-breakdown-head {
+        font-size: 0.84rem;
+        font-weight: 800;
+        color: var(--muted);
+        padding: 0 0 8px;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+      }
+
+      .debt-breakdown-row {
+        padding: 10px 0;
+        font-size: 0.92rem;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.14);
+      }
+
+      .debt-breakdown-row:last-child {
+        border-bottom: none;
+      }
+
+      .debt-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        background: rgba(15, 139, 109, 0.1);
+        color: var(--emerald-dark);
+        border: 1px solid rgba(15, 139, 109, 0.18);
+      }
+
+      .debt-note {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .month-row,
+      .two-col-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 12px 13px;
+        border-radius: 11px;
+        border: 1px solid #d8d2c3;
+        background: #fff;
+        font-size: 0.95rem;
+        outline: none;
+        font-family: inherit;
+      }
+
+      textarea {
+        min-height: 84px;
+        resize: vertical;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
+      }
+
+      .action-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 16px 0 18px;
+      }
+
+      .btn {
+        border: none;
+        padding: 12px 16px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 0.92rem;
+        font-weight: 800;
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .btn-main {
+        color: white;
+        background: linear-gradient(135deg, #17a07f, #0c6c56);
+        box-shadow: 0 8px 18px rgba(15, 139, 109, 0.18);
+      }
+
+      .btn-calc {
+        color: white;
+        background: linear-gradient(135deg, #3b7bd0, #20559d);
+      }
+
+      .btn-clear {
+        color: white;
+        background: linear-gradient(135deg, #d17f3e, #b95c2d);
+      }
+
+      .btn-save {
+        color: white;
+        background: linear-gradient(135deg, #11806a, #0b6a54);
+      }
+
+      .month-quick-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      .month-quick-actions .btn {
+        flex: 1 1 160px;
+      }
+
+      .btn-remove {
+        min-width: 42px;
+        padding: 10px 0;
+        color: white;
+        background: linear-gradient(135deg, #be5757, #974040);
+      }
+
+      .totals-grid,
+      .compare-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+
+      .mini-card,
+      .compare-card {
+        padding: 14px;
+      }
+
+      .mini-card h4,
+      .compare-card h4 {
+        font-size: 0.86rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      .mini-card p,
+      .compare-card p {
+        font-size: 1.05rem;
+        font-weight: 900;
+      }
+
+      .strategy-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .strategy-card {
+        padding: 14px;
+        border-radius: 14px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.98),
+          rgba(245, 255, 250, 0.96)
+        );
+        border: 1px solid rgba(212, 175, 55, 0.22);
+      }
+
+      .strategy-card h4 {
+        font-size: 0.88rem;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .strategy-value {
+        font-size: 1.03rem;
+        font-weight: 900;
+        line-height: 1.4;
+      }
+
+      .strategy-sub {
+        margin-top: 8px;
+        font-size: 0.88rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .strategy-wide {
+        grid-column: 1 / -1;
+      }
+
+      .chart-wrap,
+      .compare-wrap,
+      .portfolio-wrap,
+      .networth-wrap,
+      .investment-growth-wrap {
+        margin-top: 16px;
+        padding: 15px;
+      }
+
+      .chart-wrap h3,
+      .compare-wrap h3,
+      .portfolio-wrap h3,
+      .networth-wrap h3,
+      .investment-growth-wrap h3 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+      }
+
+      .chart-layout {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 18px;
+        align-items: center;
+      }
+
+      .chart-holder {
+        display: grid;
+        place-items: center;
+      }
+
+      #expenseChart {
+        display: block;
+        width: 320px;
+        height: 320px;
+        max-width: 100%;
+      }
+
+      .chart-legend {
+        display: grid;
+        gap: 8px;
+        align-content: start;
+      }
+
+      .legend-item {
+        display: grid;
+        grid-template-columns: 14px 1fr auto;
+        gap: 10px;
+        align-items: center;
+        font-size: 0.92rem;
+        padding: 8px 10px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(212, 175, 55, 0.12);
+      }
+
+      .legend-swatch {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+      }
+
+      .legend-percent {
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .totals-inline {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .totals-chip {
+        padding: 12px;
+        border-radius: 14px;
+        background: linear-gradient(180deg, #fffef8, #f4fff8);
+        border: 1px solid #e6d7a7;
+      }
+
+      .totals-chip h4 {
+        font-size: 0.84rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      .totals-chip p {
+        font-size: 1rem;
+        font-weight: 900;
+      }
+
+      .footer {
+        max-width: 1380px;
+        margin: 18px auto 0;
+        color: #5a6675;
+        font-size: 0.9rem;
+      }
+
+      .panel .summary-box {
+        margin-bottom: 12px;
+      }
+
+      .section-shell {
+        margin-top: 16px;
+        padding: 15px;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .section-head h3 {
+        font-size: 1rem;
+        margin: 0;
+      }
+
+      .section-toggle {
+        border: 1px solid rgba(212, 175, 55, 0.25);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.98),
+          rgba(245, 255, 250, 0.95)
+        );
+        color: var(--emerald-dark);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .section-body.hidden {
+        display: none;
+      }
+
+      .debt-row {
+        padding: 12px;
+        border-radius: 16px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.98),
+          rgba(246, 255, 250, 0.96)
+        );
+        border: 1px solid rgba(212, 175, 55, 0.22);
+        box-shadow: 0 8px 20px rgba(20, 30, 40, 0.05);
+      }
+
+      .debt-helper-note {
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.4;
+      }
+
+      .savings-results-grid,
+      .currency-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .calc-output {
+        background: #f8fffb;
+        font-weight: 800;
+      }
+
+      @media (max-width: 1200px) {
+        .chart-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 1080px) {
+        .entry-row,
+        .portfolio-row,
+        .debt-row,
+        .debt-results-grid,
+        .debt-breakdown-head,
+        .debt-breakdown-row {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .totals-grid,
+        .compare-grid,
+        .totals-inline {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .app-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .panel {
+          position: static;
+        }
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 18px 12px 34px;
+        }
+
+        .top-brand h1 {
+          font-size: 1.9rem;
+        }
+
+        .entry-row,
+        .simple-row,
+        .portfolio-row,
+        .debt-row,
+        .debt-results-grid,
+        .debt-breakdown-head,
+        .debt-breakdown-row,
+        .totals-grid,
+        .compare-grid,
+        .month-row,
+        .two-col-row,
+        .totals-inline,
+        .strategy-grid,
+        .debt-secondary-row,
+        .debt-loan-cards {
+          grid-template-columns: 1fr;
+        }
+
+        .action-row,
+        .month-quick-actions {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+
+        .guide-drawer {
+          width: 100vw;
+        }
+
+        #expenseChart {
+          width: 280px;
+          height: 280px;
+        }
+      }
+      /* =========================================================
+   NUTRIFINANCE iPHONE SECTION TABS 01
+   ========================================================= */
+      .nf-mobile-tabs {
+        display: none;
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding-bottom: 92px;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        input,
+        select,
+        textarea {
+          font-size: 16px;
+        }
+
+        .nf-mobile-tabs {
+          position: sticky;
+          top: 0;
+          z-index: 50;
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 6px;
+          max-width: 1380px;
+          margin: 0 auto 12px;
+          padding: 8px;
+          border-radius: 18px;
+          background: rgba(255, 251, 243, 0.82);
+          border: 1px solid rgba(212, 175, 55, 0.22);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          box-shadow: 0 10px 24px rgba(20, 30, 40, 0.08);
+        }
+
+        .nf-mobile-tabs button {
+          border: none;
+          border-radius: 13px;
+          padding: 10px 6px;
+          background: rgba(255, 255, 255, 0.72);
+          color: var(--emerald-dark);
+          font-size: 0.72rem;
+          font-weight: 900;
+          cursor: pointer;
+        }
+
+        .nf-mobile-tabs button.active {
+          color: #4f4212;
+          background: linear-gradient(135deg, #f1d77a 0%, #d4af37 100%);
+          box-shadow: 0 8px 18px rgba(212, 175, 55, 0.16);
+        }
+
+        .nf-mobile-body {
+          display: block;
+        }
+
+        .nf-mobile-section {
+          display: none;
+        }
+
+        .nf-mobile-section.active {
+          display: block;
+        }
+
+        .nf-mobile-section > * + * {
+          margin-top: 12px;
+        }
+
+        .nf-mobile-section .panel {
+          position: static;
+          width: 100%;
+        }
+
+        .tracker-card {
+          padding: 14px;
+        }
+      }
+      @media (max-width: 640px) {
+        .nf-mobile-tabs,
+        .nf-mobile-tabs * {
+          pointer-events: auto !important;
+        }
+
+        .nf-mobile-tabs {
+          z-index: 999 !important;
+        }
+      }
+      /* =========================================================
+   NUTRIFINANCE iPHONE MONTH BUTTON COMPACT 02
+   ========================================================= */
+      @media (max-width: 640px) {
+        .nf-mobile-section[data-nf-section="month"] .month-quick-actions {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 8px !important;
+          margin: 10px 0 14px !important;
+        }
+
+        .nf-mobile-section[data-nf-section="month"] .month-quick-actions .btn {
+          width: 100% !important;
+          min-height: 44px !important;
+          padding: 10px 8px !important;
+          border-radius: 13px !important;
+          font-size: 0.78rem !important;
+          line-height: 1.1 !important;
+        }
+
+        .nf-mobile-section[data-nf-section="month"] #loadMonthBtn {
+          grid-column: 1 / -1 !important;
+        }
+      }
+      /* =========================================================
+   NUTRIFINANCE iPHONE MONTH ACTION GRID 03
+   ========================================================= */
+      @media (max-width: 640px) {
+        .nf-mobile-section[data-nf-section="month"] > .action-row {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 8px !important;
+          margin: 12px 0 14px !important;
+        }
+
+        .nf-mobile-section[data-nf-section="month"] > .action-row .btn {
+          width: 100% !important;
+          min-height: 42px !important;
+          padding: 9px 8px !important;
+          border-radius: 13px !important;
+          font-size: 0.74rem !important;
+          line-height: 1.1 !important;
+        }
+
+        .nf-mobile-section[data-nf-section="month"] #clearBtn {
+          grid-column: 1 / -1 !important;
+        }
+
+        .nf-mobile-section[data-nf-section="month"] #importFile {
+          display: none !important;
+        }
+      }
+      /* =========================================================
+   NUTRIFINANCE iPHONE REMOVE BUTTON REFINEMENT 04
+   ========================================================= */
+      @media (max-width: 640px) {
+        .income-row .remove-income,
+        .expense-row .remove-expense,
+        .asset-row .remove-asset,
+        .liability-row .remove-liability,
+        .investment-row .remove-investment,
+        .debt-row .remove-debt {
+          width: auto !important;
+          min-width: 42px !important;
+          height: 34px !important;
+          padding: 0 14px !important;
+          margin: 8px 0 4px auto !important;
+
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+
+          border-radius: 999px !important;
+          font-size: 0.9rem !important;
+          font-weight: 700 !important;
+
+          background: linear-gradient(
+            135deg,
+            #c85c5c 0%,
+            #b54848 100%
+          ) !important;
+
+          box-shadow: 0 4px 10px rgba(181, 72, 72, 0.18) !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-brand">
+      <div class="brand-glow">
+        <h1>NutriFinance</h1>
+      </div>
+      <p>Mindful Spending</p>
+    </div>
+
+    <nav
+      class="nf-mobile-tabs"
+      id="nfMobileTabs"
+      aria-label="NutriFinance mobile sections"
+    >
+      <button
+        type="button"
+        class="active"
+        data-nf-tab="overview"
+        onclick="showNutriFinanceMobileSection('overview')"
+      >
+        Overview
+      </button>
+      <button
+        type="button"
+        data-nf-tab="month"
+        onclick="showNutriFinanceMobileSection('month')"
+      >
+        Month
+      </button>
+      <button
+        type="button"
+        data-nf-tab="wealth"
+        onclick="showNutriFinanceMobileSection('wealth')"
+      >
+        Wealth
+      </button>
+      <button
+        type="button"
+        data-nf-tab="debt"
+        onclick="showNutriFinanceMobileSection('debt')"
+      >
+        Debt
+      </button>
+      <button
+        type="button"
+        data-nf-tab="tools"
+        onclick="showNutriFinanceMobileSection('tools')"
+      >
+        Tools
+      </button>
+    </nav>
+
+    <main class="app-shell">
+      <aside class="panel">
+        <h2>Wealth Report</h2>
+        <div class="gold-line"></div>
+
+        <div class="summary-box">
+          <h3>Selected Month</h3>
+          <div class="summary-value" id="selectedMonthLabel">March 2026</div>
+        </div>
+
+        <div class="summary-box">
+          <h3>Total Income Entered</h3>
+          <div class="summary-value income-text" id="reportIncome">0.00</div>
+        </div>
+
+        <div class="summary-box">
+          <h3>Total Expense Entered</h3>
+          <div class="summary-value expense-text" id="reportExpense">0.00</div>
+        </div>
+
+        <div class="summary-box">
+          <h3>Calculated Balance</h3>
+          <div class="summary-value balance-text" id="reportBalance">0.00</div>
+        </div>
+
+        <div class="summary-box">
+          <h3>Savings Target Progress</h3>
+          <div class="summary-value income-text" id="savingsProgressText">
+            No target yet
+          </div>
+        </div>
+
+        <div class="summary-box">
+          <h3>Net Worth</h3>
+          <div class="summary-value balance-text" id="netWorthSummary">
+            0.00
+          </div>
+        </div>
+
+        <div class="summary-box">
+          <h3>Investment Portfolio Value</h3>
+          <div class="summary-value income-text" id="portfolioValueSummary">
+            0.00
+          </div>
+        </div>
+
+        <div class="summary-box">
+          <h3>Total Debts</h3>
+          <div class="summary-value expense-text" id="reportTotalDebts">
+            0.00
+          </div>
+        </div>
+
+        <div class="summary-box">
+          <h3>Recent Entries</h3>
+          <div class="report-list" id="reportList">
+            <p style="color: #6b7280">No entries yet.</p>
+          </div>
+        </div>
+
+        <div class="insight-box">
+          <h3>Insight Box</h3>
+          <div class="insight-list" id="insightList">
+            <div class="insight-item">
+              Add your entries to unlock smart insights.
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="tracker-card">
+        <h2>Monthly Wealth Tracker</h2>
+        <div class="gold-line"></div>
+
+        <div class="section-title">Tracking Month & Savings Goal</div>
+        <div class="month-row">
+          <input type="month" id="monthPicker" />
+          <input
+            type="number"
+            id="savingsTargetInput"
+            placeholder="Enter savings target"
+          />
+        </div>
+        <div class="month-quick-actions">
+          <button class="btn btn-main" id="prevMonthBtn" type="button">
+            Previous Month
+          </button>
+          <button class="btn btn-main" id="currentMonthBtn" type="button">
+            Present Month
+          </button>
+          <button class="btn btn-calc" id="loadMonthBtn" type="button">
+            Explain My Numbers
+          </button>
+        </div>
+
+        <div class="section-title">Income Sources</div>
+        <div id="incomeContainer"></div>
+
+        <div class="section-title">Expenses</div>
+        <div id="expenseContainer"></div>
+
+        <div class="action-row">
+          <button class="btn btn-main" id="addIncomeBtn">
+            + Add Income Source
+          </button>
+          <button class="btn btn-main" id="addExpenseBtn">+ Add Expense</button>
+          <button class="btn btn-main" id="exportBtn">Export Excel</button>
+          <button class="btn btn-main" id="importBtn">Import</button>
+          <button class="btn btn-calc" id="calculateBtn">
+            Calculate Balance
+          </button>
+          <button class="btn btn-save" id="saveMonthBtn">
+            Save This Month
+          </button>
+          <button class="btn btn-clear" id="clearBtn">Clear This Month</button>
+          <input
+            type="file"
+            id="importFile"
+            accept=".csv"
+            style="display: none"
+          />
+        </div>
+
+        <div class="totals-grid">
+          <div class="mini-card">
+            <h4>Income Subtotal</h4>
+            <p class="income-text" id="incomeSubtotal">0.00</p>
+          </div>
+
+          <div class="mini-card">
+            <h4>Expense Subtotal</h4>
+            <p class="expense-text" id="expenseSubtotal">0.00</p>
+          </div>
+
+          <div class="mini-card">
+            <h4>Balance Result</h4>
+            <p class="balance-text" id="balanceResult">0.00</p>
+          </div>
+
+          <div class="mini-card">
+            <h4>Spent vs Income</h4>
+            <p id="spentPercent">0%</p>
+          </div>
+        </div>
+
+        <div class="compare-wrap">
+          <h3>Monthly Comparison</h3>
+          <div class="compare-grid">
+            <div class="compare-card">
+              <h4>Previous Income</h4>
+              <p id="prevIncome">0.00</p>
+            </div>
+            <div class="compare-card">
+              <h4>Previous Expense</h4>
+              <p id="prevExpense">0.00</p>
+            </div>
+            <div class="compare-card">
+              <h4>Predicted Next Expense</h4>
+              <p id="predictedExpense">0.00</p>
+            </div>
+            <div class="compare-card">
+              <h4>Income Change</h4>
+              <p id="incomeChange">0.00</p>
+            </div>
+            <div class="compare-card">
+              <h4>Expense Change</h4>
+              <p id="expenseChange">0.00</p>
+            </div>
+            <div class="compare-card">
+              <h4>Financial Score</h4>
+              <p id="financialScore">0 / 100</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="compare-wrap">
+          <h3>Wealth Strategy Engine</h3>
+          <div class="strategy-grid" id="strategyBox">
+            <div class="strategy-card strategy-wide">
+              <h4>Strategy Status</h4>
+              <div class="strategy-value">
+                Add income and expenses to unlock wealth strategy.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <h3>Expense Breakdown</h3>
+          <div class="chart-layout">
+            <div class="chart-holder">
+              <canvas id="expenseChart" width="320" height="320"></canvas>
+            </div>
+            <div class="chart-legend" id="chartLegend">
+              <div style="color: #6b7280">No expense categories yet.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="investment-growth-wrap">
+          <h3>Investment Growth</h3>
+          <div class="month-row">
+            <input
+              type="number"
+              id="investAmount"
+              placeholder="Monthly investment"
+            />
+            <input
+              type="number"
+              id="investRate"
+              placeholder="Annual return %"
+            />
+          </div>
+          <div class="month-row" style="margin-top: 10px">
+            <input type="number" id="investYears" placeholder="Years" />
+            <input
+              type="text"
+              id="investResult"
+              class="calc-output"
+              placeholder="Future value"
+              readonly
+            />
+          </div>
+        </div>
+
+        <div class="section-shell" id="savingsCalcSection">
+          <div class="section-head">
+            <h3>Savings Calculator</h3>
+            <button
+              class="section-toggle"
+              type="button"
+              data-toggle-target="savingsCalcBody"
+            >
+              Hide
+            </button>
+          </div>
+          <div class="section-body" id="savingsCalcBody">
+            <div class="month-row">
+              <input
+                type="number"
+                id="savingsGoalInput"
+                placeholder="Savings goal"
+              />
+              <input
+                type="number"
+                id="currentSavedInput"
+                placeholder="Already saved"
+              />
+            </div>
+            <div class="month-row" style="margin-top: 10px">
+              <input
+                type="number"
+                id="monthlySavingsInput"
+                placeholder="Monthly contribution"
+              />
+              <input
+                type="number"
+                id="savingsRateCalcInput"
+                placeholder="Annual rate % (optional)"
+              />
+            </div>
+            <div class="savings-results-grid">
+              <div class="totals-chip">
+                <h4>Remaining Goal</h4>
+                <p class="warning-text" id="remainingGoalText">0.00</p>
+              </div>
+              <div class="totals-chip">
+                <h4>Months to Goal</h4>
+                <p class="balance-text" id="monthsToGoalText">0</p>
+              </div>
+              <div class="totals-chip">
+                <h4>Target Date</h4>
+                <p class="income-text" id="goalDateText">—</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-shell" id="currencySection">
+          <div class="section-head">
+            <h3>Currency Converter</h3>
+            <button
+              class="section-toggle"
+              type="button"
+              data-toggle-target="currencyBody"
+            >
+              Hide
+            </button>
+          </div>
+          <div class="section-body" id="currencyBody">
+            <div class="month-row">
+              <select id="currencyFrom">
+                <option value="AED">AED</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="PHP">PHP</option>
+                <option value="SAR">SAR</option>
+                <option value="GBP">GBP</option>
+              </select>
+              <select id="currencyTo">
+                <option value="AED">AED</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="PHP">PHP</option>
+                <option value="SAR">SAR</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
+            <div class="currency-grid">
+              <input type="number" id="currencyAmount" placeholder="Amount" />
+              <input
+                type="number"
+                id="currencyRate"
+                placeholder="Exchange rate"
+                step="0.000001"
+              />
+              <input
+                type="text"
+                id="currencyResult"
+                class="calc-output"
+                placeholder="Converted result"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="networth-wrap">
+          <h3>Net Worth Tracker</h3>
+
+          <div class="section-title">Assets</div>
+          <div id="assetContainer"></div>
+          <button class="btn btn-main" id="addAssetBtn" style="margin-top: 8px">
+            + Add Asset
+          </button>
+
+          <div class="section-title">Liabilities</div>
+          <div id="liabilityContainer"></div>
+          <button
+            class="btn btn-main"
+            id="addLiabilityBtn"
+            style="margin-top: 8px"
+          >
+            + Add Liability
+          </button>
+
+          <div class="totals-inline">
+            <div class="totals-chip">
+              <h4>Total Assets</h4>
+              <p class="income-text" id="assetsTotal">0.00</p>
+            </div>
+            <div class="totals-chip">
+              <h4>Total Liabilities</h4>
+              <p class="expense-text" id="liabilitiesTotal">0.00</p>
+            </div>
+            <div class="totals-chip">
+              <h4>Net Worth</h4>
+              <p class="balance-text" id="netWorthValue">0.00</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="portfolio-wrap">
+          <h3>Investment Portfolio Tracker</h3>
+          <div id="portfolioContainer"></div>
+          <button
+            class="btn btn-main"
+            id="addPortfolioBtn"
+            style="margin-top: 8px"
+          >
+            + Add Investment Asset
+          </button>
+
+          <div class="totals-inline">
+            <div class="totals-chip">
+              <h4>Total Invested</h4>
+              <p id="totalInvested">0.00</p>
+            </div>
+            <div class="totals-chip">
+              <h4>Current Value</h4>
+              <p class="income-text" id="currentPortfolioValue">0.00</p>
+            </div>
+            <div class="totals-chip">
+              <h4>Total Gain / Loss</h4>
+              <p id="portfolioGainLoss">0.00</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="portfolio-wrap" id="debtSection">
+          <div class="section-head">
+            <h3>Utang Free</h3>
+            <button
+              class="section-toggle"
+              type="button"
+              data-toggle-target="debtBody"
+            >
+              Hide
+            </button>
+          </div>
+          <div class="section-body" id="debtBody">
+            <div id="debtContainer"></div>
+            <div
+              class="action-row"
+              style="margin-top: 10px; margin-bottom: 12px"
+            >
+              <button class="btn btn-main" id="addDebtBtn" type="button">
+                + Add Debt
+              </button>
+            </div>
+
+            <div class="debt-results-grid">
+              <div class="totals-chip">
+                <h4>Total Debt Balance</h4>
+                <p class="expense-text" id="debtBalanceTotal">0.00</p>
+              </div>
+              <div class="totals-chip">
+                <h4>Total Monthly Payment</h4>
+                <p class="warning-text" id="debtWeeklyTotal">0.00</p>
+              </div>
+              <div class="totals-chip">
+                <h4>Projected Interest</h4>
+                <p class="warning-text" id="debtInterestTotal">0.00</p>
+              </div>
+              <div class="totals-chip">
+                <h4>Debt-Free Target Date</h4>
+                <p class="balance-text" id="debtFreeDate">—</p>
+              </div>
+            </div>
+
+            <div class="insight-box" style="margin-top: 14px">
+              <h3>Utang Insight</h3>
+              <div class="insight-list" id="debtInsightList">
+                <div class="insight-item">
+                  Add your debts to see your weekly payoff picture.
+                </div>
+              </div>
+            </div>
+
+            <div class="debt-breakdown-wrap">
+              <h3 style="margin-bottom: 10px">Utang Breakdown</h3>
+              <div class="debt-breakdown-head">
+                <div>Debt</div>
+                <div>Balance</div>
+                <div>Weekly</div>
+                <div>Interest</div>
+                <div>Payoff</div>
+                <div>Burden</div>
+              </div>
+              <div id="debtBreakdownRows">
+                <div style="color: #6b7280; padding-top: 10px">
+                  No debt rows yet.
+                </div>
+              </div>
+              <div class="debt-note">
+                Weekly payment uses your chosen term in months or years, but the
+                calculator keeps the actual repayment cadence on a weekly basis
+                for a more realistic day-to-day view.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="guide-overlay" id="guideOverlay"></div>
+    <aside class="guide-drawer" id="guideDrawer" aria-hidden="true">
+      <div class="guide-header">
+        <div>
+          <h3>NutriFinance Calculation Guide</h3>
+          <p id="guideMonthLabel">See how this month's numbers were derived.</p>
+        </div>
+        <button
+          class="guide-close"
+          id="guideCloseBtn"
+          type="button"
+          aria-label="Close calculation guide"
+        >
+          ×
+        </button>
+      </div>
+      <div class="guide-body" id="guideContent"></div>
+    </aside>
+
+    <div class="footer">Copyright © 2026</div>
+
+    <script>
+      const STORAGE_KEY = "nutriFinanceMonthlyTracker_v3";
+
+      const expenseCategories = [
+        "Food",
+        "Bills",
+        "Utilities",
+        "Transport",
+        "Housing",
+        "Family",
+        "Health",
+        "Shopping",
+        "Leisure",
+        "Savings",
+        "Investment",
+        "Other",
+      ];
+
+      const fixedCategories = new Set([
+        "Bills",
+        "Utilities",
+        "Housing",
+        "Health",
+      ]);
+
+      const flexibleCategories = new Set([
+        "Food",
+        "Transport",
+        "Family",
+        "Shopping",
+        "Leisure",
+        "Savings",
+        "Investment",
+        "Other",
+      ]);
+
+      const chartColors = [
+        "#11806a",
+        "#2f6db3",
+        "#d4af37",
+        "#be5757",
+        "#7a5cff",
+        "#ff8a3d",
+        "#1aa7a1",
+        "#20559d",
+        "#dc5f86",
+        "#7f8c8d",
+        "#5b9e4d",
+        "#6c63ff",
+      ];
+
+      const incomeContainer = document.getElementById("incomeContainer");
+      const expenseContainer = document.getElementById("expenseContainer");
+      const assetContainer = document.getElementById("assetContainer");
+      const liabilityContainer = document.getElementById("liabilityContainer");
+      const portfolioContainer = document.getElementById("portfolioContainer");
+      const debtContainer = document.getElementById("debtContainer");
+
+      const addIncomeBtn = document.getElementById("addIncomeBtn");
+      const addExpenseBtn = document.getElementById("addExpenseBtn");
+      const addAssetBtn = document.getElementById("addAssetBtn");
+      const addLiabilityBtn = document.getElementById("addLiabilityBtn");
+      const addPortfolioBtn = document.getElementById("addPortfolioBtn");
+      const addDebtBtn = document.getElementById("addDebtBtn");
+
+      const exportBtn = document.getElementById("exportBtn");
+      const importBtn = document.getElementById("importBtn");
+      const importFile = document.getElementById("importFile");
+
+      const calculateBtn = document.getElementById("calculateBtn");
+      const saveMonthBtn = document.getElementById("saveMonthBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const monthPicker = document.getElementById("monthPicker");
+      const prevMonthBtn = document.getElementById("prevMonthBtn");
+      const currentMonthBtn = document.getElementById("currentMonthBtn");
+      const loadMonthBtn = document.getElementById("loadMonthBtn");
+      const savingsTargetInput = document.getElementById("savingsTargetInput");
+
+      const incomeSubtotalEl = document.getElementById("incomeSubtotal");
+      const expenseSubtotalEl = document.getElementById("expenseSubtotal");
+      const balanceResultEl = document.getElementById("balanceResult");
+      const spentPercentEl = document.getElementById("spentPercent");
+
+      const reportIncome = document.getElementById("reportIncome");
+      const reportExpense = document.getElementById("reportExpense");
+      const reportBalance = document.getElementById("reportBalance");
+      const savingsProgressText = document.getElementById(
+        "savingsProgressText",
+      );
+      const netWorthSummary = document.getElementById("netWorthSummary");
+      const portfolioValueSummary = document.getElementById(
+        "portfolioValueSummary",
+      );
+      const reportList = document.getElementById("reportList");
+      const insightList = document.getElementById("insightList");
+      const selectedMonthLabel = document.getElementById("selectedMonthLabel");
+
+      const prevIncome = document.getElementById("prevIncome");
+      const prevExpense = document.getElementById("prevExpense");
+      const incomeChange = document.getElementById("incomeChange");
+      const expenseChange = document.getElementById("expenseChange");
+
+      const assetsTotalEl = document.getElementById("assetsTotal");
+      const liabilitiesTotalEl = document.getElementById("liabilitiesTotal");
+      const netWorthValueEl = document.getElementById("netWorthValue");
+
+      const totalInvestedEl = document.getElementById("totalInvested");
+      const currentPortfolioValueEl = document.getElementById(
+        "currentPortfolioValue",
+      );
+      const portfolioGainLossEl = document.getElementById("portfolioGainLoss");
+
+      const debtBalanceTotalEl = document.getElementById("debtBalanceTotal");
+      const debtWeeklyTotalEl = document.getElementById("debtWeeklyTotal");
+      const debtInterestTotalEl = document.getElementById("debtInterestTotal");
+      const debtFreeDateEl = document.getElementById("debtFreeDate");
+      const debtInsightList = document.getElementById("debtInsightList");
+      const debtBreakdownRows = document.getElementById("debtBreakdownRows");
+
+      const chartLegend = document.getElementById("chartLegend");
+      const strategyBox = document.getElementById("strategyBox");
+      const guideOverlay = document.getElementById("guideOverlay");
+      const guideDrawer = document.getElementById("guideDrawer");
+      const guideContent = document.getElementById("guideContent");
+      const guideMonthLabel = document.getElementById("guideMonthLabel");
+      const guideCloseBtn = document.getElementById("guideCloseBtn");
+      const expenseChart = document.getElementById("expenseChart");
+      const chartCtx = expenseChart.getContext("2d");
+
+      const investAmountInput = document.getElementById("investAmount");
+      const investRateInput = document.getElementById("investRate");
+      const investYearsInput = document.getElementById("investYears");
+      const investResultInput = document.getElementById("investResult");
+
+      const reportTotalDebts = document.getElementById("reportTotalDebts");
+      const savingsGoalInput = document.getElementById("savingsGoalInput");
+      const currentSavedInput = document.getElementById("currentSavedInput");
+      const monthlySavingsInput = document.getElementById(
+        "monthlySavingsInput",
+      );
+      const savingsRateCalcInput = document.getElementById(
+        "savingsRateCalcInput",
+      );
+      const remainingGoalText = document.getElementById("remainingGoalText");
+      const monthsToGoalText = document.getElementById("monthsToGoalText");
+      const goalDateText = document.getElementById("goalDateText");
+      const currencyFrom = document.getElementById("currencyFrom");
+      const currencyTo = document.getElementById("currencyTo");
+      const currencyAmount = document.getElementById("currencyAmount");
+      const currencyRate = document.getElementById("currencyRate");
+      const currencyResult = document.getElementById("currencyResult");
+      const SECTION_TOGGLE_KEY = "nutriFinanceSectionToggles_v1";
+
+      let store = loadStore();
+
+      function loadStore() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch {
+          return {};
+        }
+      }
+
+      function saveStore() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+      }
+
+      function loadToggleStore() {
+        try {
+          return JSON.parse(localStorage.getItem(SECTION_TOGGLE_KEY) || "{}");
+        } catch {
+          return {};
+        }
+      }
+
+      function saveToggleStore(toggleState) {
+        localStorage.setItem(SECTION_TOGGLE_KEY, JSON.stringify(toggleState));
+      }
+
+      function makeEmptyIncome() {
+        return { name: "", amount: "" };
+      }
+
+      function makeEmptyExpense() {
+        return { name: "", amount: "", category: "Food", note: "" };
+      }
+
+      function makeEmptyAsset() {
+        return { name: "", amount: "" };
+      }
+
+      function makeEmptyLiability() {
+        return { name: "", amount: "" };
+      }
+
+      function makeEmptyPortfolio() {
+        return {
+          name: "",
+          invested: "",
+          currentValue: "",
+          years: "",
+          note: "",
+        };
+      }
+
+      function makeEmptyDebt() {
+        return {
+          name: "",
+          balance: "",
+          interestRate: "",
+          termValue: "",
+          termType: "months",
+          startDate: "",
+          extraPayment: "",
+          addToExpenses: false,
+        };
+      }
+
+      function makeEmptySavingsCalc() {
+        return {
+          goal: "",
+          current: "",
+          monthly: "",
+          annualRate: "",
+        };
+      }
+
+      function makeEmptyCurrencyConverter() {
+        return {
+          from: "AED",
+          to: "USD",
+          amount: "",
+          rate: "",
+        };
+      }
+
+      function getDefaultMonthValue() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        return `${year}-${month}`;
+      }
+
+      function formatMonthLabel(monthValue) {
+        if (!monthValue) return "No month selected";
+        const [year, month] = monthValue.split("-");
+        const date = new Date(Number(year), Number(month) - 1, 1);
+        return date.toLocaleString(undefined, {
+          month: "long",
+          year: "numeric",
+        });
+      }
+
+      function getPreviousMonthKey(monthKey) {
+        const [year, month] = monthKey.split("-").map(Number);
+        const date = new Date(year, month - 2, 1);
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      }
+
+      function ensureMonthData(monthKey) {
+        if (!store[monthKey]) {
+          store[monthKey] = {
+            incomes: [makeEmptyIncome()],
+            expenses: [makeEmptyExpense()],
+            assets: [makeEmptyAsset()],
+            liabilities: [makeEmptyLiability()],
+            portfolio: [makeEmptyPortfolio()],
+            debts: [makeEmptyDebt()],
+            balance: 0,
+            savingsTarget: "",
+            savingsCalc: makeEmptySavingsCalc(),
+            currencyConverter: makeEmptyCurrencyConverter(),
+          };
+        }
+      }
+
+      function getCurrentMonthKey() {
+        return monthPicker.value;
+      }
+
+      function normalizeMonthData(monthData) {
+        monthData.incomes = Array.isArray(monthData.incomes)
+          ? monthData.incomes
+          : [makeEmptyIncome()];
+        monthData.expenses = Array.isArray(monthData.expenses)
+          ? monthData.expenses
+          : [makeEmptyExpense()];
+        monthData.assets = Array.isArray(monthData.assets)
+          ? monthData.assets
+          : [makeEmptyAsset()];
+        monthData.liabilities = Array.isArray(monthData.liabilities)
+          ? monthData.liabilities
+          : [makeEmptyLiability()];
+        monthData.portfolio = Array.isArray(monthData.portfolio)
+          ? monthData.portfolio
+          : [makeEmptyPortfolio()];
+        monthData.debts = (
+          Array.isArray(monthData.debts) ? monthData.debts : [makeEmptyDebt()]
+        ).map((debt) => ({
+          ...makeEmptyDebt(),
+          ...debt,
+          addToExpenses: Boolean(debt?.addToExpenses),
+        }));
+        monthData.savingsCalc = {
+          ...makeEmptySavingsCalc(),
+          ...(monthData.savingsCalc || {}),
+        };
+        monthData.currencyConverter = {
+          ...makeEmptyCurrencyConverter(),
+          ...(monthData.currencyConverter || {}),
+        };
+        return monthData;
+      }
+
+      function getCurrentMonthData() {
+        const key = getCurrentMonthKey();
+        ensureMonthData(key);
+        return normalizeMonthData(store[key]);
+      }
+
+      function formatMoney(num) {
+        return Number(num).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
+
+      function sanitizeText(text) {
+        return String(text ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function csvEscape(value) {
+        const stringValue = String(value ?? "");
+        return `"${stringValue.replace(/"/g, '""')}"`;
+      }
+
+      function parseCSVLine(line) {
+        const result = [];
+        let current = "";
+        let inQuotes = false;
+
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          const next = line[i + 1];
+
+          if (char === '"' && inQuotes && next === '"') {
+            current += '"';
+            i++;
+          } else if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === "," && !inQuotes) {
+            result.push(current);
+            current = "";
+          } else {
+            current += char;
+          }
+        }
+
+        result.push(current);
+        return result;
+      }
+
+      function sumValues(list, field = "amount") {
+        return list.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+      }
+
+      function createIncomeRow(data = makeEmptyIncome()) {
+        const row = document.createElement("div");
+        row.className = "simple-row";
+        row.innerHTML = `
+          <input type="text" class="income-name" placeholder="Enter income name" value="${sanitizeText(data.name)}">
+          <input type="number" class="income-amount" placeholder="Enter income" value="${sanitizeText(data.amount)}">
+          <button class="btn btn-remove" type="button">×</button>
+        `;
+
+        row.querySelector(".btn-remove").addEventListener("click", () => {
+          row.remove();
+          ensureAtLeastOneRow("income");
+          syncFromDOM();
+        });
+
+        attachLiveUpdate(row);
+        incomeContainer.appendChild(row);
+      }
+
+      function createExpenseRow(data = makeEmptyExpense()) {
+        const row = document.createElement("div");
+        row.className = "entry-row";
+        row.innerHTML = `
+          <input type="text" class="expense-name" placeholder="Enter expense name" value="${sanitizeText(data.name)}">
+          <input type="number" class="expense-amount" placeholder="Enter expense" value="${sanitizeText(data.amount)}">
+          <select class="expense-category">
+            ${expenseCategories
+              .map(
+                (category) => `
+              <option value="${sanitizeText(category)}" ${data.category === category ? "selected" : ""}>${sanitizeText(category)}</option>
+            `,
+              )
+              .join("")}
+          </select>
+          <input type="text" class="expense-note" placeholder="Optional note (e.g. I owe R)" value="${sanitizeText(data.note)}">
+          <button class="btn btn-remove" type="button">×</button>
+        `;
+
+        row.querySelector(".btn-remove").addEventListener("click", () => {
+          row.remove();
+          ensureAtLeastOneRow("expense");
+          syncFromDOM();
+        });
+
+        attachLiveUpdate(row);
+        expenseContainer.appendChild(row);
+      }
+
+      function createAssetRow(data = makeEmptyAsset()) {
+        const row = document.createElement("div");
+        row.className = "simple-row";
+        row.innerHTML = `
+          <input type="text" class="asset-name" placeholder="Asset name (cash, account, jewelry, etc.)" value="${sanitizeText(data.name)}">
+          <input type="number" class="asset-amount" placeholder="Amount" value="${sanitizeText(data.amount)}">
+          <button class="btn btn-remove" type="button">×</button>
+        `;
+
+        row.querySelector(".btn-remove").addEventListener("click", () => {
+          row.remove();
+          ensureAtLeastOneRow("asset");
+          syncFromDOM();
+        });
+
+        attachLiveUpdate(row);
+        assetContainer.appendChild(row);
+      }
+
+      function createLiabilityRow(data = makeEmptyLiability()) {
+        const row = document.createElement("div");
+        row.className = "simple-row";
+        row.innerHTML = `
+          <input type="text" class="liability-name" placeholder="Liability name (loan, debt, card, etc.)" value="${sanitizeText(data.name)}">
+          <input type="number" class="liability-amount" placeholder="Amount" value="${sanitizeText(data.amount)}">
+          <button class="btn btn-remove" type="button">×</button>
+        `;
+
+        row.querySelector(".btn-remove").addEventListener("click", () => {
+          row.remove();
+          ensureAtLeastOneRow("liability");
+          syncFromDOM();
+        });
+
+        attachLiveUpdate(row);
+        liabilityContainer.appendChild(row);
+      }
+
+      function createPortfolioRow(data = makeEmptyPortfolio()) {
+        const row = document.createElement("div");
+        row.className = "portfolio-row";
+        row.innerHTML = `
+          <input type="text" class="portfolio-name" placeholder="Asset (ETF, stock, gold, crypto)" value="${sanitizeText(data.name)}">
+          <input type="number" class="portfolio-invested" placeholder="Invested" value="${sanitizeText(data.invested)}">
+          <input type="number" class="portfolio-current" placeholder="Current value" value="${sanitizeText(data.currentValue)}">
+          <input type="number" class="portfolio-years" placeholder="Years" value="${sanitizeText(data.years)}">
+          <input type="text" class="portfolio-note" placeholder="Optional note" value="${sanitizeText(data.note)}">
+          <button class="btn btn-remove" type="button">×</button>
+        `;
+
+        row.querySelector(".btn-remove").addEventListener("click", () => {
+          row.remove();
+          ensureAtLeastOneRow("portfolio");
+          syncFromDOM();
+        });
+
+        attachLiveUpdate(row);
+        portfolioContainer.appendChild(row);
+      }
+
+      function createDebtRow(data = makeEmptyDebt()) {
+        const row = document.createElement("div");
+        row.className = "debt-row";
+
+        const debtPlanPreview = calculateSingleDebtPlan(data);
+        const monthlyExpensePreview =
+          debtPlanPreview.actualWeeklyPayment > 0
+            ? (debtPlanPreview.actualWeeklyPayment * 52) / 12
+            : 0;
+
+        row.innerHTML = `
+          <input type="text" class="debt-name" placeholder="Debt name (card, loan, utang)" value="${sanitizeText(data.name)}">
+          <input type="number" class="debt-balance" placeholder="Balance" value="${sanitizeText(data.balance)}">
+          <input type="number" class="debt-rate" placeholder="Interest %" value="${sanitizeText(data.interestRate)}">
+          <input type="number" class="debt-term" placeholder="Term value" value="${sanitizeText(data.termValue)}">
+          <select class="debt-term-type">
+            <option value="months" ${data.termType === "months" ? "selected" : ""}>Months</option>
+            <option value="years" ${data.termType === "years" ? "selected" : ""}>Years</option>
+          </select>
+          <input type="number" class="debt-extra" placeholder="Extra / week" value="${sanitizeText(data.extraPayment)}">
+          <button class="btn btn-remove" type="button">×</button>
+
+          <div class="debt-secondary-row">
+            <input type="date" class="debt-start-date" value="${sanitizeText(data.startDate)}">
+            <div class="debt-helper-note">Monthly payment shown · set a start date for payoff estimate</div>
+            <label class="debt-toggle-wrap">
+              <input type="checkbox" class="debt-add-expense" ${data.addToExpenses ? "checked" : ""}>
+              <span>Add to expenses</span>
+            </label>
+          </div>
+
+          <div class="debt-loan-cards">
+            <div class="debt-loan-card">
+              <h4>Debt balance</h4>
+              <p class="expense-text debt-card-balance">${formatMoney(debtPlanPreview.principal)}</p>
+            </div>
+            <div class="debt-loan-card">
+              <h4>Monthly Payment</h4>
+              <p class="warning-text debt-card-weekly">${formatMoney(monthlyExpensePreview)}</p>
+            </div>
+            <div class="debt-loan-card">
+              <h4>Projected Interest</h4>
+              <p class="warning-text debt-card-interest">${formatMoney(debtPlanPreview.totalInterest)}</p>
+            </div>
+            <div class="debt-loan-card">
+              <h4>Debt-free Target Date</h4>
+              <p class="balance-text debt-card-date">${sanitizeText(debtPlanPreview.payoffDate || "—")}</p>
+            </div>
+          </div>
+        `;
+
+        row.querySelector(".btn-remove").addEventListener("click", () => {
+          row.remove();
+          ensureAtLeastOneRow("debt");
+          syncFromDOM();
+        });
+
+        const updateDebtPreview = () => {
+          const liveDebt = {
+            name: row.querySelector(".debt-name").value.trim(),
+            balance: row.querySelector(".debt-balance").value.trim(),
+            interestRate: row.querySelector(".debt-rate").value.trim(),
+            termValue: row.querySelector(".debt-term").value.trim(),
+            termType: row.querySelector(".debt-term-type").value,
+            startDate: row.querySelector(".debt-start-date").value || "",
+            extraPayment: row.querySelector(".debt-extra").value.trim(),
+            addToExpenses: row.querySelector(".debt-add-expense").checked,
+          };
+
+          const plan = calculateSingleDebtPlan(liveDebt);
+          row.querySelector(".debt-card-balance").textContent = formatMoney(
+            plan.principal,
+          );
+          row.querySelector(".debt-card-weekly").textContent = formatMoney(
+            plan.actualWeeklyPayment > 0
+              ? (plan.actualWeeklyPayment * 52) / 12
+              : 0,
+          );
+          row.querySelector(".debt-card-interest").textContent = formatMoney(
+            plan.totalInterest,
+          );
+          row.querySelector(".debt-card-date").textContent =
+            plan.payoffDate || "—";
+        };
+
+        row.querySelectorAll("input, select").forEach((input) => {
+          input.addEventListener("input", updateDebtPreview);
+          input.addEventListener("change", updateDebtPreview);
+        });
+
+        attachLiveUpdate(row);
+        debtContainer.appendChild(row);
+        updateDebtPreview();
+      }
+
+      function ensureAtLeastOneRow(type) {
+        if (type === "income" && incomeContainer.children.length === 0)
+          createIncomeRow();
+        if (type === "expense" && expenseContainer.children.length === 0)
+          createExpenseRow();
+        if (type === "asset" && assetContainer.children.length === 0)
+          createAssetRow();
+        if (type === "liability" && liabilityContainer.children.length === 0)
+          createLiabilityRow();
+        if (type === "portfolio" && portfolioContainer.children.length === 0)
+          createPortfolioRow();
+        if (type === "debt" && debtContainer.children.length === 0)
+          createDebtRow();
+      }
+
+      function attachLiveUpdate(scope = document) {
+        scope.querySelectorAll("input, select, textarea").forEach((input) => {
+          input.addEventListener("input", syncFromDOM);
+          input.addEventListener("change", syncFromDOM);
+        });
+      }
+
+      function collectIncomesFromDOM() {
+        return [
+          ...document.querySelectorAll("#incomeContainer .simple-row"),
+        ].map((row) => ({
+          name: row.querySelector(".income-name").value.trim(),
+          amount: row.querySelector(".income-amount").value.trim(),
+        }));
+      }
+
+      function collectExpensesFromDOM() {
+        return [
+          ...document.querySelectorAll("#expenseContainer .entry-row"),
+        ].map((row) => ({
+          name: row.querySelector(".expense-name").value.trim(),
+          amount: row.querySelector(".expense-amount").value.trim(),
+          category: row.querySelector(".expense-category").value,
+          note: row.querySelector(".expense-note").value.trim(),
+        }));
+      }
+
+      function collectAssetsFromDOM() {
+        return [
+          ...document.querySelectorAll("#assetContainer .simple-row"),
+        ].map((row) => ({
+          name: row.querySelector(".asset-name").value.trim(),
+          amount: row.querySelector(".asset-amount").value.trim(),
+        }));
+      }
+
+      function collectLiabilitiesFromDOM() {
+        return [
+          ...document.querySelectorAll("#liabilityContainer .simple-row"),
+        ].map((row) => ({
+          name: row.querySelector(".liability-name").value.trim(),
+          amount: row.querySelector(".liability-amount").value.trim(),
+        }));
+      }
+
+      function collectPortfolioFromDOM() {
+        return [
+          ...document.querySelectorAll("#portfolioContainer .portfolio-row"),
+        ].map((row) => ({
+          name: row.querySelector(".portfolio-name").value.trim(),
+          invested: row.querySelector(".portfolio-invested").value.trim(),
+          currentValue: row.querySelector(".portfolio-current").value.trim(),
+          years: row.querySelector(".portfolio-years").value.trim(),
+          note: row.querySelector(".portfolio-note").value.trim(),
+        }));
+      }
+
+      function collectDebtsFromDOM() {
+        return [...document.querySelectorAll("#debtContainer .debt-row")].map(
+          (row) => ({
+            name: row.querySelector(".debt-name").value.trim(),
+            balance: row.querySelector(".debt-balance").value.trim(),
+            interestRate: row.querySelector(".debt-rate").value.trim(),
+            termValue: row.querySelector(".debt-term").value.trim(),
+            termType: row.querySelector(".debt-term-type").value,
+            startDate: row.querySelector(".debt-start-date")?.value || "",
+            extraPayment: row.querySelector(".debt-extra").value.trim(),
+            addToExpenses: Boolean(
+              row.querySelector(".debt-add-expense")?.checked,
+            ),
+          }),
+        );
+      }
+
+      function syncFromDOM() {
+        const monthData = getCurrentMonthData();
+        monthData.incomes = collectIncomesFromDOM();
+        monthData.expenses = collectExpensesFromDOM();
+        monthData.assets = collectAssetsFromDOM();
+        monthData.liabilities = collectLiabilitiesFromDOM();
+        monthData.portfolio = collectPortfolioFromDOM();
+        monthData.debts = collectDebtsFromDOM();
+        monthData.savingsTarget = savingsTargetInput.value.trim();
+        monthData.savingsCalc = {
+          goal: savingsGoalInput.value.trim(),
+          current: currentSavedInput.value.trim(),
+          monthly: monthlySavingsInput.value.trim(),
+          annualRate: savingsRateCalcInput.value.trim(),
+        };
+        monthData.currencyConverter = {
+          from: currencyFrom.value,
+          to: currencyTo.value,
+          amount: currencyAmount.value.trim(),
+          rate: currencyRate.value.trim(),
+        };
+
+        updateSubtotalsOnly();
+        calculateSavingsPlan();
+        calculateCurrencyConversion();
+        saveStore();
+      }
+
+      function getExpenseCategoryTotals(monthData) {
+        const totals = {};
+        monthData.expenses.forEach((item) => {
+          const amount = Number(item.amount) || 0;
+          if (amount > 0) {
+            const category = item.category || "Other";
+            totals[category] = (totals[category] || 0) + amount;
+          }
+        });
+        return totals;
+      }
+
+      function getTopExpense(monthData) {
+        let biggest = null;
+        monthData.expenses.forEach((item) => {
+          const amount = Number(item.amount) || 0;
+          if ((item.name || amount) && (!biggest || amount > biggest.amount)) {
+            biggest = {
+              name: item.name || "Untitled Expense",
+              amount,
+              category: item.category || "Other",
+            };
+          }
+        });
+        return biggest;
+      }
+
+      function getTopExpenseCategory(monthData) {
+        const totals = getExpenseCategoryTotals(monthData);
+        let top = null;
+        Object.entries(totals).forEach(([category, amount]) => {
+          if (!top || amount > top.amount) top = { category, amount };
+        });
+        return top;
+      }
+
+      function getFixedFlexibleTotals(monthData) {
+        let fixed = 0;
+        let flexible = 0;
+
+        monthData.expenses.forEach((item) => {
+          const amount = Number(item.amount) || 0;
+          const category = item.category || "Other";
+          if (fixedCategories.has(category)) {
+            fixed += amount;
+          } else {
+            flexible += amount;
+          }
+        });
+
+        return { fixed, flexible };
+      }
+
+      function calculateNetWorth(monthData) {
+        const assets = sumValues(monthData.assets || []);
+        const liabilities = sumValues(monthData.liabilities || []);
+        return {
+          assets,
+          liabilities,
+          netWorth: assets - liabilities,
+        };
+      }
+
+      function calculatePortfolioTotals(monthData) {
+        const totalInvested = sumValues(monthData.portfolio || [], "invested");
+        const currentValue = sumValues(
+          monthData.portfolio || [],
+          "currentValue",
+        );
+        return {
+          totalInvested,
+          currentValue,
+          gainLoss: currentValue - totalInvested,
+        };
+      }
+
+      function getDebtTermWeeks(termValue, termType) {
+        const value = Number(termValue) || 0;
+        if (termType === "years") return Math.max(Math.round(value * 52), 1);
+        return Math.max(Math.round((value * 52) / 12), 1);
+      }
+
+      function addWeeksToDate(startDate, weeksToAdd) {
+        const baseDate = startDate ? new Date(startDate) : new Date();
+        const safeDate = Number.isNaN(baseDate.getTime())
+          ? new Date()
+          : baseDate;
+        const result = new Date(safeDate);
+        result.setDate(result.getDate() + Math.max(weeksToAdd, 0) * 7);
+        return result;
+      }
+
+      function formatDateLabel(dateValue) {
+        if (!dateValue) return "—";
+        const date =
+          dateValue instanceof Date ? dateValue : new Date(dateValue);
+        if (Number.isNaN(date.getTime())) return "—";
+        return date.toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      function getDebtBurdenLabel(balance, weeklyPayment, totalInterest) {
+        if (!balance || !weeklyPayment) return "Needs input";
+        const interestPct = balance > 0 ? (totalInterest / balance) * 100 : 0;
+        const weeklyRatio = balance > 0 ? weeklyPayment / balance : 0;
+
+        if (interestPct <= 10 && weeklyRatio >= 0.04) return "Low burden";
+        if (interestPct <= 25 && weeklyRatio >= 0.025) return "Manageable";
+        if (interestPct <= 45) return "Risky";
+        return "Heavy pressure";
+      }
+
+      function calculateSingleDebtPlan(debt) {
+        const principal = Number(debt.balance) || 0;
+        const annualRate = Number(debt.interestRate) || 0;
+        const termWeeks = getDebtTermWeeks(debt.termValue, debt.termType);
+        const weeklyRate = annualRate / 100 / 52;
+        const extraPayment = Math.max(Number(debt.extraPayment) || 0, 0);
+
+        if (!principal || !termWeeks) {
+          return {
+            principal,
+            annualRate,
+            termWeeks,
+            weeklyRate,
+            baseWeeklyPayment: 0,
+            actualWeeklyPayment: 0,
+            totalInterest: 0,
+            totalRepayment: 0,
+            payoffWeeks: 0,
+            payoffDate: debt.startDate || "",
+            burdenLabel: "Needs input",
+          };
+        }
+
+        const baseWeeklyPayment =
+          weeklyRate > 0
+            ? (principal * weeklyRate) /
+              (1 - Math.pow(1 + weeklyRate, -termWeeks))
+            : principal / termWeeks;
+
+        let payment = baseWeeklyPayment + extraPayment;
+        if (weeklyRate > 0) {
+          payment = Math.max(payment, principal * weeklyRate + 0.01);
+        } else {
+          payment = Math.max(payment, principal / termWeeks);
+        }
+
+        let remaining = principal;
+        let payoffWeeks = 0;
+        let totalRepayment = 0;
+        const maxLoops = Math.max(termWeeks * 6, 5200);
+
+        while (remaining > 0.005 && payoffWeeks < maxLoops) {
+          const interest = remaining * weeklyRate;
+          remaining += interest;
+          const installment = Math.min(payment, remaining);
+          remaining -= installment;
+          totalRepayment += installment;
+          payoffWeeks += 1;
+        }
+
+        const totalInterest = Math.max(totalRepayment - principal, 0);
+        const payoffDate = formatDateLabel(
+          addWeeksToDate(debt.startDate, payoffWeeks),
+        );
+        const burdenLabel = getDebtBurdenLabel(
+          principal,
+          payment,
+          totalInterest,
+        );
+
+        return {
+          principal,
+          annualRate,
+          termWeeks,
+          weeklyRate,
+          baseWeeklyPayment,
+          actualWeeklyPayment: payment,
+          totalInterest,
+          totalRepayment,
+          payoffWeeks,
+          payoffDate,
+          burdenLabel,
+        };
+      }
+
+      function calculateDebtPortfolio(monthData) {
+        const debtItems = (monthData.debts || [])
+          .map((debt) => ({
+            ...debt,
+            plan: calculateSingleDebtPlan(debt),
+          }))
+          .filter(
+            (item) =>
+              item.name ||
+              Number(item.balance) ||
+              Number(item.interestRate) ||
+              Number(item.termValue) ||
+              Number(item.extraPayment),
+          );
+
+        const totals = debtItems.reduce(
+          (acc, item) => {
+            acc.balance += item.plan.principal;
+            acc.weekly += item.plan.actualWeeklyPayment;
+            acc.interest += item.plan.totalInterest;
+            acc.repayment += item.plan.totalRepayment;
+            acc.maxWeeks = Math.max(acc.maxWeeks, item.plan.payoffWeeks);
+            return acc;
+          },
+          { balance: 0, weekly: 0, interest: 0, repayment: 0, maxWeeks: 0 },
+        );
+
+        let latestDate = "—";
+        if (debtItems.length) {
+          const latest = debtItems.reduce((best, item) => {
+            const date = addWeeksToDate(item.startDate, item.plan.payoffWeeks);
+            return !best || date > best ? date : best;
+          }, null);
+          latestDate = formatDateLabel(latest);
+        }
+
+        return {
+          items: debtItems,
+          totals,
+          latestDate,
+        };
+      }
+
+      function renderDebtSection() {
+        const monthData = getCurrentMonthData();
+        const debtData = calculateDebtPortfolio(monthData);
+
+        debtBalanceTotalEl.textContent = formatMoney(debtData.totals.balance);
+        debtWeeklyTotalEl.textContent = formatMoney(
+          (debtData.totals.weekly * 52) / 12,
+        );
+        debtInterestTotalEl.textContent = formatMoney(debtData.totals.interest);
+        debtFreeDateEl.textContent = debtData.latestDate;
+
+        if (!debtData.items.length) {
+          debtInsightList.innerHTML = `<div class="insight-item">Add your debts to see your monthly payoff picture.</div>`;
+          debtBreakdownRows.innerHTML = `<div style="color:#6b7280; padding-top: 10px;">No debt rows yet.</div>`;
+          return debtData;
+        }
+
+        const highestInterestDebt = [...debtData.items].sort(
+          (a, b) => b.plan.totalInterest - a.plan.totalInterest,
+        )[0];
+        const smallestBalanceDebt = [...debtData.items].sort(
+          (a, b) => a.plan.principal - b.plan.principal,
+        )[0];
+        const insights = [];
+
+        insights.push(
+          `Your combined debt balance is <strong>${formatMoney(debtData.totals.balance)}</strong> with an estimated monthly repayment of <strong>${formatMoney((debtData.totals.weekly * 52) / 12)}</strong>.`,
+        );
+
+        if (debtData.totals.interest > 0) {
+          insights.push(
+            `Projected total interest is <strong>${formatMoney(debtData.totals.interest)}</strong> if you keep the current terms and extra payments.`,
+          );
+        }
+
+        if (highestInterestDebt?.name) {
+          insights.push(
+            `<strong>${sanitizeText(highestInterestDebt.name)}</strong> is the costliest debt right now, adding about <strong>${formatMoney(highestInterestDebt.plan.totalInterest)}</strong> in interest.`,
+          );
+        }
+
+        if (smallestBalanceDebt?.name) {
+          insights.push(
+            `Smallest balance to clear first is <strong>${sanitizeText(smallestBalanceDebt.name)}</strong> at <strong>${formatMoney(smallestBalanceDebt.plan.principal)}</strong>.`,
+          );
+        }
+
+        const debtWithExtraPotential = debtData.items.find(
+          (item) =>
+            Number(item.extraPayment || 0) === 0 && item.plan.principal > 0,
+        );
+        if (debtWithExtraPotential) {
+          insights.push(
+            `Even a small weekly extra on <strong>${sanitizeText(debtWithExtraPotential.name || "one of your debts")}</strong> can shorten the payoff date because extra payments hit the balance faster.`,
+          );
+        }
+
+        insights.push(
+          `Your overall debt-free target date is <strong>${sanitizeText(debtData.latestDate)}</strong> based on the slowest debt in the current set.`,
+        );
+
+        debtInsightList.innerHTML = insights
+          .map((text) => `<div class="insight-item">${text}</div>`)
+          .join("");
+
+        debtBreakdownRows.innerHTML = debtData.items
+          .map(
+            (item) => `
+          <div class="debt-breakdown-row">
+            <div><strong>${sanitizeText(item.name || "Untitled Debt")}</strong><div class="report-sub">${sanitizeText(item.termType === "years" ? `${item.termValue || 0} year term` : `${item.termValue || 0} month term`)}</div></div>
+            <div>${formatMoney(item.plan.principal)}</div>
+            <div>${formatMoney((item.plan.actualWeeklyPayment * 52) / 12)}</div>
+            <div>${formatMoney(item.plan.totalInterest)}</div>
+            <div>${sanitizeText(item.plan.payoffDate)}</div>
+            <div><span class="debt-pill">${sanitizeText(item.plan.burdenLabel)}</span></div>
+          </div>
+        `,
+          )
+          .join("");
+
+        return debtData;
+      }
+
+      function getDebtExpenseContribution(monthData) {
+        const debtData = calculateDebtPortfolio(monthData);
+        const monthlyEquivalent = debtData.items.reduce((sum, item) => {
+          if (!item.addToExpenses) return sum;
+          return sum + (item.plan.actualWeeklyPayment * 52) / 12;
+        }, 0);
+
+        return {
+          debtData,
+          monthlyEquivalent,
+        };
+      }
+
+      function calculateSavingsPlan() {
+        const goal = Number(savingsGoalInput.value) || 0;
+        const current = Number(currentSavedInput.value) || 0;
+        const monthly = Number(monthlySavingsInput.value) || 0;
+        const annualRate = Number(savingsRateCalcInput.value) || 0;
+
+        const remaining = Math.max(goal - current, 0);
+        remainingGoalText.textContent = formatMoney(remaining);
+
+        if (goal <= 0) {
+          monthsToGoalText.textContent = "0";
+          goalDateText.textContent = "—";
+          return { remaining: 0, months: 0, targetDate: null };
+        }
+
+        if (remaining === 0) {
+          monthsToGoalText.textContent = "0";
+          goalDateText.textContent = "Goal reached ✔";
+          return { remaining, months: 0, targetDate: new Date() };
+        }
+
+        if (monthly <= 0) {
+          monthsToGoalText.textContent = "Need monthly amount";
+          goalDateText.textContent = "—";
+          return { remaining, months: 0, targetDate: null };
+        }
+
+        const monthlyRate = annualRate > 0 ? annualRate / 100 / 12 : 0;
+        let balance = current;
+        let months = 0;
+        const maxMonths = 1200;
+
+        while (balance + 0.005 < goal && months < maxMonths) {
+          balance = (balance + monthly) * (1 + monthlyRate);
+          months += 1;
+        }
+
+        const targetDate = new Date();
+        targetDate.setMonth(targetDate.getMonth() + months);
+
+        monthsToGoalText.textContent = String(months);
+        goalDateText.textContent =
+          months > 0 ? formatDateLabel(targetDate) : "—";
+        return { remaining, months, targetDate };
+      }
+
+      function calculateCurrencyConversion() {
+        const amount = Number(currencyAmount.value) || 0;
+        const rate = Number(currencyRate.value) || 0;
+        const result = amount * rate;
+        currencyResult.value =
+          amount && rate ? `${formatMoney(result)} ${currencyTo.value}` : "";
+      }
+
+      function initializeSectionToggles() {
+        const toggleState = loadToggleStore();
+        document.querySelectorAll(".section-toggle").forEach((button) => {
+          const targetId = button.dataset.toggleTarget;
+          const target = document.getElementById(targetId);
+          if (!target) return;
+
+          const setState = (isHidden) => {
+            target.classList.toggle("hidden", isHidden);
+            button.textContent = isHidden ? "Show" : "Hide";
+            button.setAttribute("aria-expanded", String(!isHidden));
+          };
+
+          setState(Boolean(toggleState[targetId]));
+          button.addEventListener("click", () => {
+            const hiddenNow = !target.classList.contains("hidden");
+            setState(hiddenNow);
+            toggleState[targetId] = hiddenNow;
+            saveToggleStore(toggleState);
+          });
+        });
+      }
+
+      function calculateInvestmentGrowth() {
+        const monthly = Number(investAmountInput.value) || 0;
+        const annualRate = Number(investRateInput.value) || 0;
+        const years = Number(investYearsInput.value) || 0;
+
+        const monthlyRate = annualRate / 100 / 12;
+        const months = years * 12;
+
+        let future = 0;
+        for (let i = 0; i < months; i++) {
+          future = (future + monthly) * (1 + monthlyRate);
+        }
+
+        investResultInput.value = future > 0 ? formatMoney(future) : "";
+      }
+
+      function updateSubtotalsOnly() {
+        const monthData = getCurrentMonthData();
+        const incomeTotal = sumValues(monthData.incomes || []);
+        const baseExpenseTotal = sumValues(monthData.expenses || []);
+        const debtExpenseData = getDebtExpenseContribution(monthData);
+        const expenseTotal =
+          baseExpenseTotal + debtExpenseData.monthlyEquivalent;
+        const percentSpent =
+          incomeTotal > 0 ? Math.round((expenseTotal / incomeTotal) * 100) : 0;
+
+        incomeSubtotalEl.textContent = formatMoney(incomeTotal);
+        expenseSubtotalEl.textContent = formatMoney(expenseTotal);
+        reportIncome.textContent = formatMoney(incomeTotal);
+        reportExpense.textContent = formatMoney(expenseTotal);
+        spentPercentEl.textContent = `${percentSpent}%`;
+
+        const target = Number(monthData.savingsTarget) || 0;
+        const savedAmount = Math.max(incomeTotal - expenseTotal, 0);
+
+        if (target > 0) {
+          if (savedAmount >= target) {
+            savingsProgressText.textContent = `Target reached ✔ (${formatMoney(savedAmount)} / ${formatMoney(target)})`;
+          } else {
+            savingsProgressText.textContent = `Saved: ${formatMoney(savedAmount)} / ${formatMoney(target)}`;
+          }
+        } else {
+          savingsProgressText.textContent = "No target yet";
+        }
+
+        const { assets, liabilities, netWorth } = calculateNetWorth(monthData);
+        assetsTotalEl.textContent = formatMoney(assets);
+        liabilitiesTotalEl.textContent = formatMoney(liabilities);
+        netWorthValueEl.textContent = formatMoney(netWorth);
+        netWorthSummary.textContent = formatMoney(netWorth);
+
+        const { totalInvested, currentValue, gainLoss } =
+          calculatePortfolioTotals(monthData);
+        totalInvestedEl.textContent = formatMoney(totalInvested);
+        currentPortfolioValueEl.textContent = formatMoney(currentValue);
+        portfolioGainLossEl.textContent = formatMoney(gainLoss);
+        portfolioGainLossEl.className =
+          gainLoss >= 0 ? "income-text" : "expense-text";
+        portfolioValueSummary.textContent = formatMoney(currentValue);
+
+        reportTotalDebts.textContent = formatMoney(
+          debtExpenseData.debtData.totals.balance,
+        );
+
+        renderReportEntries();
+        renderInsights();
+        renderDebtSection();
+        calculateSavingsPlan();
+        calculateCurrencyConversion();
+        drawExpenseChart();
+        renderMonthlyComparison();
+        renderStrategyEngine();
+
+        document.getElementById("predictedExpense").textContent =
+          formatMoney(predictNextMonth());
+
+        const score = calculateFinancialScore();
+
+        document.getElementById("financialScore").textContent =
+          `${score} / 100 (${getScoreLabel(score)})`;
+      }
+
+      function calculateBalance() {
+        const monthData = getCurrentMonthData();
+        const incomeTotal = sumValues(monthData.incomes || []);
+        const baseExpenseTotal = sumValues(monthData.expenses || []);
+        const debtExpenseData = getDebtExpenseContribution(monthData);
+        const expenseTotal =
+          baseExpenseTotal + debtExpenseData.monthlyEquivalent;
+        monthData.balance = incomeTotal - expenseTotal;
+
+        balanceResultEl.textContent = formatMoney(monthData.balance);
+        reportBalance.textContent = formatMoney(monthData.balance);
+
+        renderInsights();
+        renderStrategyEngine();
+        saveStore();
+      }
+
+      function renderReportEntries() {
+        const monthData = getCurrentMonthData();
+        const items = [];
+
+        (monthData.incomes || []).forEach((item) => {
+          const amount = Number(item.amount) || 0;
+          if (item.name || amount) {
+            items.push({
+              type: "Income",
+              category: "Income Source",
+              name: item.name || "Untitled Income",
+              amount,
+              note: "",
+            });
+          }
+        });
+
+        (monthData.expenses || []).forEach((item) => {
+          const amount = Number(item.amount) || 0;
+          if (item.name || amount || item.note) {
+            items.push({
+              type: "Expense",
+              category: item.category || "Other",
+              name: item.name || "Untitled Expense",
+              amount,
+              note: item.note || "",
+            });
+          }
+        });
+
+        const debtExpenseData = getDebtExpenseContribution(monthData);
+        debtExpenseData.debtData.items
+          .filter(
+            (item) => item.addToExpenses && item.plan.actualWeeklyPayment > 0,
+          )
+          .forEach((item) => {
+            items.push({
+              type: "Expense",
+              category: "Debt Payment",
+              name: `${item.name || "Untitled Debt"} · monthly loan payment`,
+              amount: (item.plan.actualWeeklyPayment * 52) / 12,
+              note: "Auto-added from Utang Free",
+            });
+          });
+
+        if (!items.length) {
+          reportList.innerHTML = `<p style="color:#6b7280;">No entries yet.</p>`;
+          return;
+        }
+
+        reportList.innerHTML = items
+          .map(
+            (item) => `
+          <div class="report-item">
+            <strong>${sanitizeText(item.name)}</strong>
+            <div class="report-sub">${sanitizeText(item.type)}</div>
+            <div class="report-sub">${sanitizeText(item.category)}</div>
+            ${item.note ? `<div class="report-note">${sanitizeText(item.note)}</div>` : ""}
+            <div class="report-amount">${formatMoney(item.amount)}</div>
+          </div>
+        `,
+          )
+          .join("");
+      }
+
+      function renderInsights() {
+        const monthData = getCurrentMonthData();
+        const incomeTotal = sumValues(monthData.incomes || []);
+        const baseExpenseTotal = sumValues(monthData.expenses || []);
+        const debtExpenseData = getDebtExpenseContribution(monthData);
+        const expenseTotal =
+          baseExpenseTotal + debtExpenseData.monthlyEquivalent;
+        const balance = Number(monthData.balance) || 0;
+        const target = Number(monthData.savingsTarget) || 0;
+
+        const topExpense = getTopExpense(monthData);
+        const topCategory = getTopExpenseCategory(monthData);
+        const { fixed, flexible } = getFixedFlexibleTotals(monthData);
+        const prevKey = getPreviousMonthKey(getCurrentMonthKey());
+        ensureMonthData(prevKey);
+        const prevData = store[prevKey];
+        const prevExpenseTotal = sumValues(prevData.expenses || []);
+        const percentSpent =
+          incomeTotal > 0 ? Math.round((expenseTotal / incomeTotal) * 100) : 0;
+
+        const { assets, liabilities, netWorth } = calculateNetWorth(monthData);
+        const { totalInvested, currentValue, gainLoss } =
+          calculatePortfolioTotals(monthData);
+
+        const insights = [];
+
+        if (topExpense) {
+          insights.push(
+            `You spent the most on <strong>${sanitizeText(topExpense.name)}</strong> at ${formatMoney(topExpense.amount)} under ${sanitizeText(topExpense.category)}.`,
+          );
+        }
+
+        if (topCategory) {
+          insights.push(
+            `Your biggest expense category is <strong>${sanitizeText(topCategory.category)}</strong> at ${formatMoney(topCategory.amount)}.`,
+          );
+          if (expenseTotal > 0) {
+            const dominance = Math.round(
+              (topCategory.amount / expenseTotal) * 100,
+            );
+            if (dominance >= 40) {
+              insights.push(
+                `<strong>Warning:</strong> ${sanitizeText(topCategory.category)} is dominating <strong>${dominance}%</strong> of your expenses.`,
+              );
+            }
+          }
+        }
+
+        if (expenseTotal > 0) {
+          insights.push(
+            `Your fixed expenses are <strong>${formatMoney(fixed)}</strong> and your flexible expenses are <strong>${formatMoney(flexible)}</strong>.`,
+          );
+        }
+
+        if (incomeTotal > 0) {
+          if (percentSpent <= 50) {
+            insights.push(
+              `You have used about <strong>${percentSpent}%</strong> of your income. Your spending is currently controlled.`,
+            );
+          } else if (percentSpent <= 85) {
+            insights.push(
+              `You have used about <strong>${percentSpent}%</strong> of your income. You still have room, but stay mindful.`,
+            );
+          } else {
+            insights.push(
+              `You have used about <strong>${percentSpent}%</strong> of your income. You are getting close to your limit.`,
+            );
+          }
+        }
+
+        if (balance > 0) {
+          insights.push(
+            `You are currently in <strong>surplus</strong> by ${formatMoney(balance)}.`,
+          );
+        } else if (balance < 0) {
+          insights.push(
+            `You are currently in <strong>deficit</strong> by ${formatMoney(Math.abs(balance))}.`,
+          );
+        } else {
+          insights.push(
+            `Click <strong>Calculate Balance</strong> to confirm your surplus or deficit.`,
+          );
+        }
+
+        if (target > 0) {
+          const savedAmount = Math.max(incomeTotal - expenseTotal, 0);
+          const remaining = Math.max(target - savedAmount, 0);
+          if (savedAmount >= target) {
+            insights.push(
+              `Beautiful. You have reached your savings target. Saved: <strong>${formatMoney(savedAmount)} / ${formatMoney(target)}</strong>.`,
+            );
+          } else {
+            insights.push(
+              `You have saved <strong>${formatMoney(savedAmount)}</strong> toward your target of <strong>${formatMoney(target)}</strong>. Remaining: <strong>${formatMoney(remaining)}</strong>.`,
+            );
+          }
+        }
+
+        if (prevExpenseTotal > 0 || expenseTotal > 0) {
+          const diff = expenseTotal - prevExpenseTotal;
+          if (diff > 0) {
+            insights.push(
+              `Compared with last month, your expenses increased by <strong>${formatMoney(diff)}</strong>.`,
+            );
+          } else if (diff < 0) {
+            insights.push(
+              `Compared with last month, your expenses decreased by <strong>${formatMoney(Math.abs(diff))}</strong>.`,
+            );
+          } else {
+            insights.push(`Your total expenses are equal to last month.`);
+          }
+        }
+
+        if (assets > 0 || liabilities > 0) {
+          if (netWorth > 0) {
+            insights.push(
+              `Your net worth is currently <strong>${formatMoney(netWorth)}</strong>. Assets are higher than liabilities.`,
+            );
+          } else if (netWorth < 0) {
+            insights.push(
+              `Your net worth is currently <strong>${formatMoney(netWorth)}</strong>. Focus on reducing liabilities and building assets steadily.`,
+            );
+          } else {
+            insights.push(
+              `Your assets and liabilities are currently balanced at break-even.`,
+            );
+          }
+        }
+
+        if (currentValue > 0 || totalInvested > 0) {
+          if (gainLoss > 0) {
+            insights.push(
+              `Your portfolio is up by <strong>${formatMoney(gainLoss)}</strong> above your invested capital.`,
+            );
+          } else if (gainLoss < 0) {
+            insights.push(
+              `Your portfolio is down by <strong>${formatMoney(Math.abs(gainLoss))}</strong>. This may be temporary, so focus on awareness and long-term discipline.`,
+            );
+          } else {
+            insights.push(
+              `Your portfolio is currently at break-even against total invested capital.`,
+            );
+          }
+        }
+
+        const debtData = calculateDebtPortfolio(monthData);
+        if (debtData.items.length > 0) {
+          insights.push(
+            `Utang Free check: total debt is <strong>${formatMoney(debtData.totals.balance)}</strong> and your estimated combined weekly payment is <strong>${formatMoney(debtData.totals.weekly)}</strong>.`,
+          );
+        }
+
+        const oweNotes = (monthData.expenses || []).filter((item) =>
+          /owe|pay|utang|debt|split/i.test(item.note || ""),
+        );
+        if (oweNotes.length > 0) {
+          insights.push(
+            `You have <strong>${oweNotes.length}</strong> expense note${oweNotes.length > 1 ? "s" : ""} that may need follow-up or repayment attention.`,
+          );
+        }
+        const suggestion = generateBudgetSuggestion();
+        insights.push(suggestion);
+
+        insightList.innerHTML = insights.length
+          ? insights
+              .map((text) => `<div class="insight-item">${text}</div>`)
+              .join("")
+          : `<div class="insight-item">Add your entries to unlock smart insights.</div>`;
+      }
+
+      function drawExpenseChart() {
+        const monthData = getCurrentMonthData();
+        const totals = getExpenseCategoryTotals(monthData);
+        const entries = Object.entries(totals);
+
+        const center = 160;
+        const radius = 120;
+        const innerRadius = 58;
+
+        chartCtx.clearRect(0, 0, expenseChart.width, expenseChart.height);
+
+        if (!entries.length) {
+          chartCtx.beginPath();
+          chartCtx.arc(center, center, radius, 0, Math.PI * 2);
+          chartCtx.fillStyle = "#e8ecef";
+          chartCtx.fill();
+
+          chartCtx.beginPath();
+          chartCtx.arc(center, center, innerRadius, 0, Math.PI * 2);
+          chartCtx.fillStyle = "#fffdf8";
+          chartCtx.fill();
+
+          chartCtx.fillStyle = "#6b7280";
+          chartCtx.font = "14px Arial";
+          chartCtx.textAlign = "center";
+          chartCtx.fillText("No data yet", center, center + 4);
+
+          chartLegend.innerHTML = `<div style="color:#6b7280;">No expense categories yet.</div>`;
+          return;
+        }
+
+        const total = entries.reduce((sum, [, value]) => sum + value, 0);
+        let startAngle = -Math.PI / 2;
+
+        entries.forEach(([category, value], index) => {
+          const sliceAngle = (value / total) * Math.PI * 2;
+          chartCtx.beginPath();
+          chartCtx.moveTo(center, center);
+          chartCtx.arc(
+            center,
+            center,
+            radius,
+            startAngle,
+            startAngle + sliceAngle,
+          );
+          chartCtx.closePath();
+          chartCtx.fillStyle = chartColors[index % chartColors.length];
+          chartCtx.fill();
+          startAngle += sliceAngle;
+        });
+
+        chartCtx.beginPath();
+        chartCtx.arc(center, center, innerRadius, 0, Math.PI * 2);
+        chartCtx.fillStyle = "#fffdf8";
+        chartCtx.fill();
+
+        chartCtx.fillStyle = "#1f2937";
+        chartCtx.font = "bold 14px Arial";
+        chartCtx.textAlign = "center";
+        chartCtx.fillText("Expenses", center, center - 6);
+        chartCtx.font = "bold 13px Arial";
+        chartCtx.fillText(formatMoney(total), center, center + 16);
+
+        chartLegend.innerHTML = entries
+          .map(([category, value], index) => {
+            const percent = total > 0 ? Math.round((value / total) * 100) : 0;
+            return `
+            <div class="legend-item">
+              <span class="legend-swatch" style="background:${chartColors[index % chartColors.length]}"></span>
+              <span>${sanitizeText(category)} — ${formatMoney(value)}</span>
+              <span class="legend-percent">${percent}%</span>
+            </div>
+          `;
+          })
+          .join("");
+      }
+
+      function calculateStrategyMetrics(monthData) {
+        const income = sumValues(monthData.incomes || []);
+        const debtExpenseData = getDebtExpenseContribution(monthData);
+        const expense =
+          sumValues(monthData.expenses || []) +
+          debtExpenseData.monthlyEquivalent;
+        const balance = income - expense;
+
+        let fixed = 0;
+        let flexible = 0;
+        let growth = 0;
+
+        (monthData.expenses || []).forEach((item) => {
+          const amount = Number(item.amount) || 0;
+          const category = item.category || "Other";
+
+          if (fixedCategories.has(category)) {
+            fixed += amount;
+          } else if (category === "Savings" || category === "Investment") {
+            growth += amount;
+          } else {
+            flexible += amount;
+          }
+        });
+
+        const fixedPct = income > 0 ? (fixed / income) * 100 : 0;
+        const flexiblePct = income > 0 ? (flexible / income) * 100 : 0;
+        const growthPct = income > 0 ? (growth / income) * 100 : 0;
+        const savingsRate = income > 0 ? balance / income : 0;
+
+        return {
+          income,
+          expense,
+          balance,
+          fixed,
+          flexible,
+          growth,
+          fixedPct,
+          flexiblePct,
+          growthPct,
+          savingsRate,
+        };
+      }
+
+      function getGrowthSpeedLabel(savingsRate) {
+        if (savingsRate < 0) return "Deficit Trend";
+        if (savingsRate < 0.1) return "Slow Growth";
+        if (savingsRate < 0.25) return "Stable Growth";
+        if (savingsRate < 0.4) return "Strong Growth";
+        return "Wealth Builder";
+      }
+
+      function buildStrategyPlan(metrics) {
+        const {
+          income,
+          expense,
+          balance,
+          fixed,
+          flexible,
+          growth,
+          fixedPct,
+          flexiblePct,
+          growthPct,
+          savingsRate,
+        } = metrics;
+
+        const monthlyGapTo20 = Math.max(income * 0.2 - Math.max(balance, 0), 0);
+        let focusTitle = "Maintain the structure";
+        let focusText =
+          "Your current financial structure is balanced. Keep protecting your surplus and continue directing money into growth.";
+        let nextMove =
+          "Keep your flexible spending controlled and send any extra surplus to savings or investments.";
+        let shiftAmount = 0;
+
+        if (income <= 0) {
+          focusTitle = "Need income data";
+          focusText =
+            "Add at least one income entry so NutriFinance can evaluate your efficiency and growth pace.";
+          nextMove =
+            "Start by entering income and your biggest expenses for this month.";
+        } else if (balance < 0) {
+          shiftAmount = Math.abs(balance);
+          focusTitle = "Stop the deficit first";
+          focusText =
+            "Your expenses are above your income this month, which slows wealth building immediately.";
+          nextMove = `Cut at least ${formatMoney(shiftAmount)} from flexible spending or increase income so your next month returns to surplus.`;
+        } else if (flexiblePct > 30) {
+          shiftAmount = flexible * 0.1;
+          focusTitle = "Trim flexible spending";
+          focusText =
+            "Your strongest opportunity is reducing flexible spending by a small amount and redirecting it to savings. Your income can support growth, but your current pattern is slowing your progress.";
+          nextMove = `Redirect about ${formatMoney(shiftAmount)} from flexible categories into Savings or Investment next month.`;
+        } else if (fixedPct > 50) {
+          shiftAmount = fixed * 0.05;
+          focusTitle = "Lighten fixed pressure";
+          focusText =
+            "Your fixed expenses are taking a large share of your income, which limits how quickly you can grow wealth.";
+          nextMove = `Look for at least ${formatMoney(shiftAmount)} in recurring cost reductions, renegotiations, or bill control next month.`;
+        } else if (savingsRate < 0.2) {
+          shiftAmount = monthlyGapTo20;
+          focusTitle = "Boost your growth allocation";
+          focusText =
+            "You are in surplus, but not enough of your income is being kept for future wealth building.";
+          nextMove = `Increase your retained surplus by about ${formatMoney(shiftAmount)} so you can move closer to a 20% savings rate.`;
+        } else if (growthPct < 10 && balance > 0) {
+          shiftAmount = Math.min(balance * 0.35, income * 0.08);
+          focusTitle = "Give growth a direct lane";
+          focusText =
+            "You have room to grow faster, but very little is intentionally flowing into Savings or Investment categories.";
+          nextMove = `Auto-assign around ${formatMoney(shiftAmount)} of next month's surplus directly into Savings or Investment.`;
+        }
+
+        return {
+          focusTitle,
+          focusText,
+          nextMove,
+          shiftAmount,
+        };
+      }
+
+      function renderStrategyEngine() {
+        const monthData = getCurrentMonthData();
+        const metrics = calculateStrategyMetrics(monthData);
+        const predictedExpenseValue = predictNextMonth();
+
+        if (metrics.income <= 0) {
+          strategyBox.innerHTML = `
+            <div class="strategy-card strategy-wide">
+              <h4>Strategy Status</h4>
+              <div class="strategy-value">Add income and expenses to unlock wealth strategy.</div>
+              <div class="strategy-sub">NutriFinance will then evaluate spending efficiency, growth speed, and the best next financial move.</div>
+            </div>
+          `;
+          return;
+        }
+
+        const growthLabel = getGrowthSpeedLabel(metrics.savingsRate);
+        const plan = buildStrategyPlan(metrics);
+        const current3Month = Math.max(metrics.balance, 0) * 3;
+        const improvedMonthly = Math.max(metrics.balance, 0) + plan.shiftAmount;
+        const improved3Month = improvedMonthly * 3;
+        const current6Month = Math.max(metrics.balance, 0) * 6;
+        const improved6Month = improvedMonthly * 6;
+        const nextMonthSurplusIfTrendHolds =
+          metrics.income - predictedExpenseValue;
+
+        strategyBox.innerHTML = `
+          <div class="strategy-card">
+            <h4>Spending Efficiency</h4>
+            <div class="strategy-value">Fixed ${metrics.fixedPct.toFixed(0)}% · Flexible ${metrics.flexiblePct.toFixed(0)}% · Growth ${metrics.growthPct.toFixed(0)}%</div>
+            <div class="strategy-sub">Fixed: ${formatMoney(metrics.fixed)} · Flexible: ${formatMoney(metrics.flexible)} · Savings/Investment: ${formatMoney(metrics.growth)}</div>
+          </div>
+
+          <div class="strategy-card">
+            <h4>Wealth Growth Speed</h4>
+            <div class="strategy-value">${growthLabel}</div>
+            <div class="strategy-sub">Savings rate: ${(metrics.savingsRate * 100).toFixed(1)}% · Current monthly surplus: ${formatMoney(metrics.balance)}</div>
+          </div>
+
+          <div class="strategy-card strategy-wide">
+            <h4>Strategy Message</h4>
+            <div class="strategy-value">${plan.focusTitle}</div>
+            <div class="strategy-sub">${plan.focusText}<br><br>Next move: ${plan.nextMove}</div>
+          </div>
+
+          <div class="strategy-card strategy-wide">
+            <h4>Future Direction</h4>
+            <div class="strategy-value">Current path in 3 months: ${formatMoney(current3Month)} · Improved path in 3 months: ${formatMoney(improved3Month)}</div>
+            <div class="strategy-sub">Current path in 6 months: ${formatMoney(current6Month)} · Improved path in 6 months: ${formatMoney(improved6Month)}<br><br>Based on your recent trend, next month's predicted expense is ${formatMoney(predictedExpenseValue)} and your possible next-month surplus is ${formatMoney(nextMonthSurplusIfTrendHolds)}.</div>
+          </div>
+        `;
+      }
+
+      function renderMonthlyComparison() {
+        const currentKey = getCurrentMonthKey();
+        const previousKey = getPreviousMonthKey(currentKey);
+
+        ensureMonthData(previousKey);
+
+        const currentData = getCurrentMonthData();
+        const previousData = normalizeMonthData(store[previousKey]);
+
+        const currentIncome = sumValues(currentData.incomes || []);
+        const currentExpense =
+          sumValues(currentData.expenses || []) +
+          getDebtExpenseContribution(currentData).monthlyEquivalent;
+        const previousIncome = sumValues(previousData.incomes || []);
+        const previousExpense =
+          sumValues(previousData.expenses || []) +
+          getDebtExpenseContribution(previousData).monthlyEquivalent;
+
+        const incomeDiff = currentIncome - previousIncome;
+        const expenseDiff = currentExpense - previousExpense;
+
+        prevIncome.textContent = formatMoney(previousIncome);
+        prevExpense.textContent = formatMoney(previousExpense);
+        incomeChange.textContent = `${incomeDiff >= 0 ? "+" : "-"}${formatMoney(Math.abs(incomeDiff))}`;
+        expenseChange.textContent = `${expenseDiff >= 0 ? "+" : "-"}${formatMoney(Math.abs(expenseDiff))}`;
+      }
+
+      function predictNextMonth() {
+        const currentKey = getCurrentMonthKey();
+        const prevKey = getPreviousMonthKey(currentKey);
+        const prev2Key = getPreviousMonthKey(prevKey);
+
+        ensureMonthData(prevKey);
+        ensureMonthData(prev2Key);
+
+        const currentData = normalizeMonthData(store[currentKey]);
+        const prevData = normalizeMonthData(store[prevKey]);
+        const prev2Data = normalizeMonthData(store[prev2Key]);
+
+        const current =
+          sumValues(currentData.expenses) +
+          getDebtExpenseContribution(currentData).monthlyEquivalent;
+        const prev =
+          sumValues(prevData.expenses) +
+          getDebtExpenseContribution(prevData).monthlyEquivalent;
+        const prev2 =
+          sumValues(prev2Data.expenses) +
+          getDebtExpenseContribution(prev2Data).monthlyEquivalent;
+
+        return (current + prev + prev2) / 3;
+      }
+
+      function generateBudgetSuggestion() {
+        const predicted = predictNextMonth();
+        const income = sumValues(getCurrentMonthData().incomes);
+
+        if (income === 0) return "Add income to get budget suggestions.";
+
+        const safeSpend = income * 0.8;
+
+        if (predicted > safeSpend) {
+          return "⚠️ Your spending trend is high. Reduce flexible expenses.";
+        }
+
+        return "✅ You are within a healthy spending range.";
+      }
+
+      function calculateFinancialScore() {
+        const data = getCurrentMonthData();
+
+        const income = sumValues(data.incomes);
+        const expense =
+          sumValues(data.expenses) +
+          getDebtExpenseContribution(data).monthlyEquivalent;
+        const balance = income - expense;
+
+        let score = 50;
+
+        if (balance > 0) score += 20;
+        if (expense < income * 0.7) score += 15;
+        if (expense < income * 0.5) score += 15;
+
+        return Math.min(score, 100);
+      }
+
+      function getScoreLabel(score) {
+        if (score < 50) return "Warning 🔴";
+        if (score < 70) return "Stabilizing 🟡";
+        if (score < 86) return "Healthy 🟢";
+        return "Wealth Builder 🟣";
+      }
+
+      function saveCurrentMonth() {
+        syncFromDOM();
+
+        const originalText = saveMonthBtn.textContent;
+        saveMonthBtn.textContent = "Saved ✓";
+        saveMonthBtn.disabled = true;
+
+        setTimeout(() => {
+          saveMonthBtn.textContent = originalText;
+          saveMonthBtn.disabled = false;
+        }, 1200);
+      }
+
+      function loadSelectedMonth() {
+        const key = getCurrentMonthKey();
+        ensureMonthData(key);
+        saveStore();
+        renderMonth();
+      }
+
+      function openGuideDrawer() {
+        renderCalculationGuide();
+        guideOverlay.classList.add("open");
+        guideDrawer.classList.add("open");
+        guideDrawer.setAttribute("aria-hidden", "false");
+      }
+
+      function closeGuideDrawer() {
+        guideOverlay.classList.remove("open");
+        guideDrawer.classList.remove("open");
+        guideDrawer.setAttribute("aria-hidden", "true");
+      }
+
+      function goToPreviousMonth() {
+        monthPicker.value = getPreviousMonthKey(getCurrentMonthKey());
+        loadSelectedMonth();
+      }
+
+      function goToPresentMonth() {
+        monthPicker.value = getDefaultMonthValue();
+        loadSelectedMonth();
+      }
+
+      function clearCurrentMonth() {
+        const key = getCurrentMonthKey();
+        store[key] = {
+          incomes: [makeEmptyIncome()],
+          expenses: [makeEmptyExpense()],
+          assets: [makeEmptyAsset()],
+          liabilities: [makeEmptyLiability()],
+          portfolio: [makeEmptyPortfolio()],
+          debts: [makeEmptyDebt()],
+          balance: 0,
+          savingsTarget: "",
+        };
+        saveStore();
+        renderMonth();
+      }
+
+      function getScoreBreakdown(income, expense, balance) {
+        const points = [];
+        let score = 50;
+
+        if (balance > 0) {
+          score += 20;
+          points.push(
+            `+20 because you stayed in surplus (${formatMoney(balance)}).`,
+          );
+        } else {
+          points.push(`+0 from surplus because this month is not above zero.`);
+        }
+
+        if (expense < income * 0.7) {
+          score += 15;
+          points.push(`+15 because spending stayed below 70% of income.`);
+        } else {
+          points.push(
+            `+0 from the 70% rule because spending is not below that level.`,
+          );
+        }
+
+        if (expense < income * 0.5) {
+          score += 15;
+          points.push(`+15 because spending stayed below 50% of income.`);
+        } else {
+          points.push(
+            `+0 from the 50% rule because spending is not below that level.`,
+          );
+        }
+
+        return {
+          score: Math.min(score, 100),
+          points,
+        };
+      }
+
+      function renderCalculationGuide() {
+        const monthData = getCurrentMonthData();
+        const income = sumValues(monthData.incomes || []);
+        const expense = sumValues(monthData.expenses || []);
+        const balance = income - expense;
+        const percentSpent = income > 0 ? (expense / income) * 100 : 0;
+        const target = Number(monthData.savingsTarget) || 0;
+        const savedAmount = Math.max(balance, 0);
+        const metrics = calculateStrategyMetrics(monthData);
+        const growthLabel = getGrowthSpeedLabel(metrics.savingsRate);
+        const plan = buildStrategyPlan(metrics);
+        const predictedExpenseValue = predictNextMonth();
+        const nextMonthSurplusIfTrendHolds = income - predictedExpenseValue;
+        const improvedMonthly = Math.max(balance, 0) + plan.shiftAmount;
+        const current3Month = Math.max(balance, 0) * 3;
+        const improved3Month = improvedMonthly * 3;
+        const current6Month = Math.max(balance, 0) * 6;
+        const improved6Month = improvedMonthly * 6;
+        const fixedTargetText =
+          metrics.fixedPct <= 50
+            ? `Your fixed share is within the ideal line of 50% or less.`
+            : `Fixed spending is above the ideal 50% line, so it is putting more pressure on growth.`;
+        const flexibleTargetText =
+          metrics.flexiblePct <= 30
+            ? `Flexible spending is within the preferred 30% zone.`
+            : `Flexible spending is above the preferred 30% zone, so this is the easiest place to tighten.`;
+        const growthTargetText =
+          metrics.growthPct >= 20
+            ? `Growth allocation is healthy because Savings + Investment are at or above 20% of income.`
+            : `Growth allocation is still light; building Savings + Investment toward 20% of income would strengthen wealth growth.`;
+        const scoreDetails = getScoreBreakdown(income, expense, balance);
+        const topCategory = getTopExpenseCategory(monthData);
+
+        guideMonthLabel.textContent = `${formatMonthLabel(getCurrentMonthKey())} · how NutriFinance derived this month's numbers`;
+
+        guideContent.innerHTML = `
+          <section class="guide-section">
+            <h4>Core Totals</h4>
+            <div class="guide-stat">Income ${formatMoney(income)} · Expense ${formatMoney(expense)} · Balance ${formatMoney(balance)}</div>
+            <div class="guide-note">Income Subtotal is the total of all income rows. Expense Subtotal is the total of all expense rows. Balance Result is simply Income minus Expense.</div>
+          </section>
+
+          <section class="guide-section">
+            <h4>Spent vs Income</h4>
+            <div class="guide-stat">${percentSpent.toFixed(0)}% of income is being spent</div>
+            <div class="guide-note">This is calculated as Expense ÷ Income × 100. It shows how much of your monthly income is already committed to spending.</div>
+          </section>
+
+          <section class="guide-section">
+            <h4>Savings Target Progress</h4>
+            <div class="guide-stat">Saved ${formatMoney(savedAmount)} out of target ${formatMoney(target)}</div>
+            <div class="guide-note">NutriFinance treats your current surplus as the amount available toward the target. If the surplus reaches or exceeds the target, the app marks the target as reached.</div>
+          </section>
+
+          <section class="guide-section">
+            <h4>Financial Score</h4>
+            <div class="guide-stat">${scoreDetails.score} / 100 · ${getScoreLabel(scoreDetails.score)}</div>
+            <div class="guide-note">The score starts at 50 and adds points based on spending discipline.</div>
+            <ul class="guide-list">
+              ${scoreDetails.points.map((point) => `<li>${point}</li>`).join("")}
+            </ul>
+          </section>
+
+          <section class="guide-section">
+            <h4>Spending Efficiency Analysis</h4>
+            <div class="guide-stat">Fixed ${metrics.fixedPct.toFixed(1)}% · Flexible ${metrics.flexiblePct.toFixed(1)}% · Growth ${metrics.growthPct.toFixed(1)}%</div>
+            <div class="guide-note">Fixed includes Bills, Utilities, Housing, and Health. Flexible includes lifestyle and daily choice categories. Growth includes Savings and Investment.</div>
+            <ul class="guide-list">
+              <li>${fixedTargetText}</li>
+              <li>${flexibleTargetText}</li>
+              <li>${growthTargetText}</li>
+              <li>${topCategory ? `Top expense category this month: ${sanitizeText(topCategory.category)} at ${formatMoney(topCategory.amount)}.` : `No expense category total yet.`}</li>
+            </ul>
+          </section>
+
+          <section class="guide-section">
+            <h4>Wealth Growth Speed</h4>
+            <div class="guide-stat">${growthLabel} · savings rate ${income > 0 ? (metrics.savingsRate * 100).toFixed(1) : "0.0"}%</div>
+            <div class="guide-note">Savings rate is calculated as (Income − Expense) ÷ Income. NutriFinance labels it as Deficit Trend, Slow Growth, Stable Growth, Strong Growth, or Wealth Builder.</div>
+          </section>
+
+          <section class="guide-section">
+            <h4>Strategy Message</h4>
+            <div class="guide-stat">${sanitizeText(plan.focusTitle)}</div>
+            <div class="guide-note">${sanitizeText(plan.focusText)}</div>
+            <ul class="guide-list">
+              <li>Next move: ${sanitizeText(plan.nextMove)}</li>
+              <li>${plan.shiftAmount > 0 ? `Suggested monthly shift used in the projection: ${formatMoney(plan.shiftAmount)}.` : `No extra shift was needed because the current structure already looks balanced.`}</li>
+            </ul>
+          </section>
+
+          <section class="guide-section">
+            <h4>Future Direction</h4>
+            <div class="guide-stat">3 months: ${formatMoney(current3Month)} current path · ${formatMoney(improved3Month)} improved path</div>
+            <div class="guide-note">Current path uses your present monthly surplus. Improved path adds the suggested monthly shift from the strategy engine, then extends it across future months.</div>
+            <ul class="guide-list">
+              <li>6-month current path: ${formatMoney(current6Month)}</li>
+              <li>6-month improved path: ${formatMoney(improved6Month)}</li>
+              <li>Predicted next-month expense: ${formatMoney(predictedExpenseValue)} based on the average of this month and the prior two months.</li>
+              <li>Possible next-month surplus if that trend holds: ${formatMoney(nextMonthSurplusIfTrendHolds)}</li>
+            </ul>
+          </section>
+
+          ${(() => {
+            const debtData = calculateDebtPortfolio(monthData);
+            if (!debtData.items.length) {
+              return `
+                <section class="guide-section">
+                  <h4>Utang Free Formula</h4>
+                  <div class="guide-stat">No active debt values yet</div>
+                  <div class="guide-note">Once you enter debt rows, this drawer will explain your weekly debt formula and payoff dates too.</div>
+                </section>
+              `;
+            }
+
+            return `
+              <section class="guide-section">
+                <h4>Utang Free Formula</h4>
+                <div class="guide-stat">Weekly basis repayment for ${debtData.items.length} debt${debtData.items.length > 1 ? "s" : ""}</div>
+                <div class="guide-note">NutriFinance converts the annual rate into a weekly rate using Annual Interest ÷ 100 ÷ 52. If rate is above zero, the weekly payment follows the amortization formula: Principal × Weekly Rate ÷ (1 − (1 + Weekly Rate)^−Weeks). If rate is zero, it simply uses Principal ÷ Weeks. Any Extra / week is added on top, then the app simulates week by week until the balance reaches zero.</div>
+                <ul class="guide-list">
+                  ${debtData.items
+                    .map(
+                      (item) => `
+                    <li><strong>${sanitizeText(item.name || "Untitled Debt")}</strong>: balance ${formatMoney(item.plan.principal)}, base weekly ${formatMoney(item.plan.baseWeeklyPayment)}, actual weekly ${formatMoney(item.plan.actualWeeklyPayment)}, projected interest ${formatMoney(item.plan.totalInterest)}, payoff ${sanitizeText(item.plan.payoffDate)}.</li>
+                  `,
+                    )
+                    .join("")}
+                </ul>
+              </section>
+            `;
+          })()}
+        `;
+      }
+
+      function renderMonth() {
+        const key = getCurrentMonthKey();
+        ensureMonthData(key);
+        const monthData = getCurrentMonthData();
+
+        selectedMonthLabel.textContent = formatMonthLabel(key);
+        savingsTargetInput.value = monthData.savingsTarget || "";
+
+        monthData.savingsCalc = monthData.savingsCalc || makeEmptySavingsCalc();
+        monthData.currencyConverter =
+          monthData.currencyConverter || makeEmptyCurrencyConverter();
+
+        savingsGoalInput.value = monthData.savingsCalc.goal || "";
+        currentSavedInput.value = monthData.savingsCalc.current || "";
+        monthlySavingsInput.value = monthData.savingsCalc.monthly || "";
+        savingsRateCalcInput.value = monthData.savingsCalc.annualRate || "";
+
+        currencyFrom.value = monthData.currencyConverter.from || "AED";
+        currencyTo.value = monthData.currencyConverter.to || "USD";
+        currencyAmount.value = monthData.currencyConverter.amount || "";
+        currencyRate.value = monthData.currencyConverter.rate || "";
+
+        incomeContainer.innerHTML = "";
+        expenseContainer.innerHTML = "";
+        assetContainer.innerHTML = "";
+        liabilityContainer.innerHTML = "";
+        portfolioContainer.innerHTML = "";
+        debtContainer.innerHTML = "";
+
+        (monthData.incomes?.length
+          ? monthData.incomes
+          : [makeEmptyIncome()]
+        ).forEach(createIncomeRow);
+        (monthData.expenses?.length
+          ? monthData.expenses
+          : [makeEmptyExpense()]
+        ).forEach(createExpenseRow);
+        (monthData.assets?.length
+          ? monthData.assets
+          : [makeEmptyAsset()]
+        ).forEach(createAssetRow);
+        (monthData.liabilities?.length
+          ? monthData.liabilities
+          : [makeEmptyLiability()]
+        ).forEach(createLiabilityRow);
+        (monthData.portfolio?.length
+          ? monthData.portfolio
+          : [makeEmptyPortfolio()]
+        ).forEach(createPortfolioRow);
+        (monthData.debts?.length ? monthData.debts : [makeEmptyDebt()]).forEach(
+          createDebtRow,
+        );
+
+        balanceResultEl.textContent = formatMoney(monthData.balance || 0);
+        reportBalance.textContent = formatMoney(monthData.balance || 0);
+
+        updateSubtotalsOnly();
+        calculateSavingsPlan();
+        calculateCurrencyConversion();
+      }
+
+      function exportData() {
+        const monthData = getCurrentMonthData();
+        const rows = [
+          [
+            "Section",
+            "Type",
+            "Name",
+            "Amount1",
+            "Amount2",
+            "Amount3",
+            "Category",
+            "TermType",
+            "Note",
+            "Date",
+            "Rate",
+          ],
+        ];
+
+        (monthData.incomes || []).forEach((item) => {
+          rows.push([
+            "spending",
+            "Income",
+            item.name,
+            item.amount,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+          ]);
+        });
+
+        (monthData.expenses || []).forEach((item) => {
+          rows.push([
+            "spending",
+            "Expense",
+            item.name,
+            item.amount,
+            "",
+            "",
+            item.category,
+            "",
+            item.note || "",
+            "",
+            "",
+          ]);
+        });
+
+        (monthData.assets || []).forEach((item) => {
+          rows.push([
+            "networth",
+            "Asset",
+            item.name,
+            item.amount,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+          ]);
+        });
+
+        (monthData.liabilities || []).forEach((item) => {
+          rows.push([
+            "networth",
+            "Liability",
+            item.name,
+            item.amount,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+          ]);
+        });
+
+        (monthData.portfolio || []).forEach((item) => {
+          rows.push([
+            "portfolio",
+            "Investment",
+            item.name,
+            item.invested,
+            item.currentValue,
+            item.years,
+            "",
+            "",
+            item.note || "",
+            "",
+            "",
+          ]);
+        });
+
+        (monthData.debts || []).forEach((item) => {
+          rows.push([
+            "debt",
+            "Utang",
+            item.name,
+            item.balance,
+            item.termValue,
+            item.extraPayment,
+            "",
+            item.termType || "months",
+            item.addToExpenses ? "ADD_TO_EXPENSES" : "",
+            item.startDate || "",
+            item.interestRate,
+          ]);
+        });
+
+        rows.push([
+          "meta",
+          "SavingsTarget",
+          "",
+          monthData.savingsTarget || "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+        ]);
+
+        rows.push([
+          "meta",
+          "SavingsCalc",
+          "",
+          monthData.savingsCalc?.goal || "",
+          monthData.savingsCalc?.current || "",
+          monthData.savingsCalc?.monthly || "",
+          "",
+          "",
+          "",
+          "",
+          monthData.savingsCalc?.annualRate || "",
+        ]);
+
+        rows.push([
+          "meta",
+          "CurrencyConverter",
+          monthData.currencyConverter?.from || "AED",
+          monthData.currencyConverter?.amount || "",
+          "",
+          "",
+          monthData.currencyConverter?.to || "USD",
+          "",
+          "",
+          "",
+          monthData.currencyConverter?.rate || "",
+        ]);
+
+        const csv = rows.map((row) => row.map(csvEscape).join(",")).join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `nutrifinance_${getCurrentMonthKey()}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function importData(file) {
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+          const text = event.target.result;
+          const lines = text.split(/\r?\n/).filter(Boolean);
+
+          if (lines.length <= 1) return;
+
+          const incomes = [];
+          const expenses = [];
+          const assets = [];
+          const liabilities = [];
+          const portfolio = [];
+          const debts = [];
+          let savingsTarget = "";
+          let savingsCalc = makeEmptySavingsCalc();
+          let currencyConverter = makeEmptyCurrencyConverter();
+
+          lines.slice(1).forEach((line) => {
+            const cols = parseCSVLine(line);
+            const [
+              section,
+              type,
+              name,
+              amount1,
+              amount2,
+              amount3,
+              category,
+              termType,
+              note,
+              date,
+              rate,
+            ] = cols;
+
+            if (section === "spending" && type === "Income") {
+              incomes.push({ name: name || "", amount: amount1 || "" });
+            }
+
+            if (section === "spending" && type === "Expense") {
+              expenses.push({
+                name: name || "",
+                amount: amount1 || "",
+                category: category || "Other",
+                note: note || "",
+              });
+            }
+
+            if (section === "networth" && type === "Asset") {
+              assets.push({ name: name || "", amount: amount1 || "" });
+            }
+
+            if (section === "networth" && type === "Liability") {
+              liabilities.push({ name: name || "", amount: amount1 || "" });
+            }
+
+            if (section === "portfolio" && type === "Investment") {
+              portfolio.push({
+                name: name || "",
+                invested: amount1 || "",
+                currentValue: amount2 || "",
+                years: amount3 || "",
+                note: note || "",
+              });
+            }
+
+            if (section === "debt" && (type === "Utang" || type === "Debt")) {
+              debts.push({
+                name: name || "",
+                balance: amount1 || "",
+                termValue: amount2 || "",
+                extraPayment: amount3 || "",
+                termType: termType || "months",
+                startDate: date || "",
+                interestRate: rate || "",
+                addToExpenses: note === "ADD_TO_EXPENSES",
+              });
+            }
+
+            if (section === "meta" && type === "SavingsTarget") {
+              savingsTarget = amount1 || "";
+            }
+
+            if (section === "meta" && type === "SavingsCalc") {
+              savingsCalc = {
+                goal: amount1 || "",
+                current: amount2 || "",
+                monthly: amount3 || "",
+                annualRate: rate || "",
+              };
+            }
+
+            if (section === "meta" && type === "CurrencyConverter") {
+              currencyConverter = {
+                from: name || "AED",
+                to: category || "USD",
+                amount: amount1 || "",
+                rate: rate || "",
+              };
+            }
+          });
+
+          const monthData = getCurrentMonthData();
+          monthData.incomes = incomes.length ? incomes : [makeEmptyIncome()];
+          monthData.expenses = expenses.length
+            ? expenses
+            : [makeEmptyExpense()];
+          monthData.assets = assets.length ? assets : [makeEmptyAsset()];
+          monthData.liabilities = liabilities.length
+            ? liabilities
+            : [makeEmptyLiability()];
+          monthData.portfolio = portfolio.length
+            ? portfolio
+            : [makeEmptyPortfolio()];
+          monthData.debts = debts.length ? debts : [makeEmptyDebt()];
+          monthData.savingsTarget = savingsTarget;
+          monthData.savingsCalc = savingsCalc;
+          monthData.currencyConverter = currencyConverter;
+          saveStore();
+          renderMonth();
+        };
+
+        reader.readAsText(file);
+      }
+
+      addIncomeBtn.addEventListener("click", () => {
+        createIncomeRow();
+        syncFromDOM();
+      });
+
+      addExpenseBtn.addEventListener("click", () => {
+        createExpenseRow();
+        syncFromDOM();
+      });
+
+      addAssetBtn.addEventListener("click", () => {
+        createAssetRow();
+        syncFromDOM();
+      });
+
+      addLiabilityBtn.addEventListener("click", () => {
+        createLiabilityRow();
+        syncFromDOM();
+      });
+
+      addPortfolioBtn.addEventListener("click", () => {
+        createPortfolioRow();
+        syncFromDOM();
+      });
+
+      addDebtBtn.addEventListener("click", () => {
+        createDebtRow();
+        syncFromDOM();
+      });
+
+      exportBtn.addEventListener("click", exportData);
+
+      importBtn.addEventListener("click", () => {
+        importFile.click();
+      });
+
+      importFile.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) importData(file);
+        importFile.value = "";
+      });
+
+      calculateBtn.addEventListener("click", calculateBalance);
+      saveMonthBtn.addEventListener("click", saveCurrentMonth);
+      clearBtn.addEventListener("click", clearCurrentMonth);
+      prevMonthBtn.addEventListener("click", goToPreviousMonth);
+      currentMonthBtn.addEventListener("click", goToPresentMonth);
+      loadMonthBtn.addEventListener("click", openGuideDrawer);
+      guideCloseBtn.addEventListener("click", closeGuideDrawer);
+      guideOverlay.addEventListener("click", closeGuideDrawer);
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && guideDrawer.classList.contains("open")) {
+          closeGuideDrawer();
+        }
+      });
+
+      monthPicker.addEventListener("change", () => {
+        loadSelectedMonth();
+      });
+
+      savingsTargetInput.addEventListener("input", syncFromDOM);
+      savingsTargetInput.addEventListener("change", syncFromDOM);
+
+      [investAmountInput, investRateInput, investYearsInput].forEach(
+        (input) => {
+          input.addEventListener("input", calculateInvestmentGrowth);
+          input.addEventListener("change", calculateInvestmentGrowth);
+        },
+      );
+
+      [
+        savingsGoalInput,
+        currentSavedInput,
+        monthlySavingsInput,
+        savingsRateCalcInput,
+        currencyFrom,
+        currencyTo,
+        currencyAmount,
+        currencyRate,
+      ].forEach((input) => {
+        input.addEventListener("input", syncFromDOM);
+        input.addEventListener("change", syncFromDOM);
+      });
+
+      function showNutriFinanceMobileSection(target) {
+        setupNutriFinanceMobileTabs(true);
+
+        const tabs = document.getElementById("nfMobileTabs");
+        if (!tabs || !target) return;
+
+        tabs.querySelectorAll("[data-nf-tab]").forEach((tab) => {
+          tab.classList.toggle("active", tab.dataset.nfTab === target);
+        });
+
+        document.querySelectorAll(".nf-mobile-section").forEach((section) => {
+          section.classList.toggle(
+            "active",
+            section.dataset.nfSection === target,
+          );
+        });
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      function setupNutriFinanceMobileTabs(force = false) {
+        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+        const tabs = document.getElementById("nfMobileTabs");
+        const card = document.querySelector(".tracker-card");
+        const panel = document.querySelector(".panel");
+
+        if ((!isMobile && !force) || !tabs || !card) return;
+
+        let existingSections = Array.from(
+          document.querySelectorAll(".nf-mobile-section"),
+        );
+
+        if (!existingSections.length) {
+          const mobileBody = document.createElement("div");
+          mobileBody.className = "nf-mobile-body";
+
+          const sections = {
+            overview: document.createElement("section"),
+            month: document.createElement("section"),
+            wealth: document.createElement("section"),
+            debt: document.createElement("section"),
+            tools: document.createElement("section"),
+          };
+
+          Object.entries(sections).forEach(([key, section]) => {
+            section.id = `nf${key.charAt(0).toUpperCase() + key.slice(1)}Section`;
+            section.className = `nf-mobile-section ${key === "overview" ? "active" : ""}`;
+            section.dataset.nfSection = key;
+            mobileBody.appendChild(section);
+          });
+
+          card.appendChild(mobileBody);
+
+          const directChildren = (selector) =>
+            Array.from(card.querySelectorAll(selector)).filter(
+              (el) => el.parentElement === card,
+            );
+
+          const move = (el, section) => {
+            if (el) section.appendChild(el);
+          };
+
+          const findTitle = (text) =>
+            directChildren(".section-title").find(
+              (el) => el.textContent.trim() === text,
+            );
+
+          const moveTitleAndNext = (titleText, section) => {
+            const title = findTitle(titleText);
+            const next = title?.nextElementSibling;
+            move(title, section);
+            move(next, section);
+          };
+
+          move(panel, sections.overview);
+
+          move(card.querySelector(":scope > h2"), sections.month);
+          move(card.querySelector(":scope > .gold-line"), sections.month);
+
+          moveTitleAndNext("Tracking Month & Savings Goal", sections.month);
+          move(
+            card.querySelector(":scope > .month-quick-actions"),
+            sections.month,
+          );
+
+          moveTitleAndNext("Income Sources", sections.month);
+          moveTitleAndNext("Expenses", sections.month);
+          move(card.querySelector(":scope > .action-row"), sections.month);
+          move(card.querySelector(":scope > .totals-grid"), sections.month);
+
+          const compareWraps = directChildren(".compare-wrap");
+          move(
+            compareWraps.find(
+              (el) =>
+                el.querySelector("h3")?.textContent.trim() ===
+                "Monthly Comparison",
+            ),
+            sections.overview,
+          );
+          move(
+            compareWraps.find(
+              (el) =>
+                el.querySelector("h3")?.textContent.trim() ===
+                "Wealth Strategy Engine",
+            ),
+            sections.tools,
+          );
+
+          move(card.querySelector(":scope > .chart-wrap"), sections.overview);
+          move(
+            card.querySelector(":scope > .investment-growth-wrap"),
+            sections.wealth,
+          );
+          move(card.querySelector(":scope > .networth-wrap"), sections.wealth);
+
+          directChildren(".portfolio-wrap").forEach((el) => {
+            if (el.id === "debtSection") {
+              move(el, sections.debt);
+            } else {
+              move(el, sections.wealth);
+            }
+          });
+
+          move(document.getElementById("savingsCalcSection"), sections.tools);
+          move(document.getElementById("currencySection"), sections.tools);
+
+          existingSections = Array.from(
+            document.querySelectorAll(".nf-mobile-section"),
+          );
+        }
+
+        if (tabs.dataset.bound === "true") return;
+        tabs.dataset.bound = "true";
+
+        tabs.querySelectorAll("[data-nf-tab]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const target = btn.dataset.nfTab;
+
+            tabs.querySelectorAll("[data-nf-tab]").forEach((tab) => {
+              tab.classList.toggle("active", tab === btn);
+            });
+
+            document
+              .querySelectorAll(".nf-mobile-section")
+              .forEach((section) => {
+                section.classList.toggle(
+                  "active",
+                  section.dataset.nfSection === target,
+                );
+              });
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+        });
+      }
+      function bindNutriFinanceMobileTabClicks() {
+        if (window.nfMobileTabsBound) return;
+        window.nfMobileTabsBound = true;
+
+        document.addEventListener("click", (e) => {
+          const btn = e.target.closest("[data-nf-tab]");
+          if (!btn) return;
+
+          const target = btn.dataset.nfTab;
+          const tabs = document.getElementById("nfMobileTabs");
+          if (!target || !tabs) return;
+
+          tabs.querySelectorAll("[data-nf-tab]").forEach((tab) => {
+            tab.classList.toggle("active", tab === btn);
+          });
+
+          document.querySelectorAll(".nf-mobile-section").forEach((section) => {
+            section.classList.toggle(
+              "active",
+              section.dataset.nfSection === target,
+            );
+          });
+
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+      monthPicker.value = getDefaultMonthValue();
+      ensureMonthData(monthPicker.value);
+      renderMonth();
+      initializeSectionToggles();
+      calculateInvestmentGrowth();
+      calculateSavingsPlan();
+      calculateCurrencyConversion();
+
+      setupNutriFinanceMobileTabs();
+      bindNutriFinanceMobileTabClicks();
+
+      /*
+Financial Score Meaning Guide:
+
+0–49   → Warning Zone (high risk, overspending)
+50–69  → Stabilizing (controlled but not optimized)
+70–85  → Healthy (good balance, building surplus)
+86–100 → Wealth Builder (strong discipline, high savings rate)
+
+Score is based on:
++20 → surplus (income > expense)
++15 → spending < 70% of income
++15 → spending < 50% of income
+*/
+    </script>
+  </body>
+</html>
