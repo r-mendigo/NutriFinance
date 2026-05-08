@@ -1346,9 +1346,162 @@
           margin: 0 !important;
         }
       }
+      /* =========================================================
+   NUTRIFINANCE LEFT LOCK PEEK 09
+   ========================================================= */
+      .nf-lock-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        background: rgba(12, 20, 28, 0.34);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.24s ease,
+          visibility 0.24s ease;
+      }
+
+      .nf-lock-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 2010;
+        width: min(390px, 88vw);
+        height: 100vh;
+        padding: 28px 22px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 251, 243, 0.98),
+          rgba(239, 255, 247, 0.98)
+        );
+        border-right: 1px solid rgba(212, 175, 55, 0.28);
+        box-shadow: 18px 0 44px rgba(20, 30, 40, 0.2);
+        transform: translateX(-105%);
+        transition: transform 0.28s ease;
+        display: flex;
+        align-items: center;
+      }
+
+      body.nf-locked {
+        overflow: hidden;
+      }
+
+      body.nf-locked .nf-lock-overlay {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      body.nf-locked .nf-lock-panel {
+        transform: translateX(0);
+      }
+
+      .nf-lock-card {
+        width: 100%;
+        display: grid;
+        gap: 14px;
+      }
+
+      .nf-lock-badge {
+        width: 58px;
+        height: 58px;
+        border-radius: 20px;
+        display: grid;
+        place-items: center;
+        color: #4f4212;
+        font-size: 1.7rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #f1d77a, #d4af37);
+        box-shadow: 0 12px 24px rgba(212, 175, 55, 0.22);
+      }
+
+      .nf-lock-card h2 {
+        font-size: 1.55rem;
+        line-height: 1.15;
+      }
+
+      .nf-lock-card p {
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.45;
+      }
+
+      .nf-lock-input {
+        height: 52px;
+        border-radius: 16px;
+        font-size: 1rem;
+        font-weight: 800;
+      }
+
+      .nf-lock-actions {
+        display: grid;
+        gap: 10px;
+      }
+
+      .nf-lock-message {
+        min-height: 20px;
+        color: var(--danger);
+        font-size: 0.88rem;
+        font-weight: 800;
+      }
+
+      .nf-lock-reset {
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 800;
+        text-align: left;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
+    <div class="nf-lock-overlay" id="nfLockOverlay"></div>
+
+    <aside class="nf-lock-panel" id="nfLockPanel" aria-hidden="true">
+      <div class="nf-lock-card">
+        <div class="nf-lock-badge">₱</div>
+        <div>
+          <h2 id="nfLockTitle">Lock NutriFinance</h2>
+          <p id="nfLockSubtitle">
+            Create a local password to protect your finance dashboard on this
+            device.
+          </p>
+        </div>
+
+        <input
+          class="nf-lock-input"
+          id="nfLockPassword"
+          type="password"
+          placeholder="Enter password"
+          autocomplete="current-password"
+        />
+
+        <input
+          class="nf-lock-input"
+          id="nfLockConfirm"
+          type="password"
+          placeholder="Confirm password"
+          autocomplete="new-password"
+        />
+
+        <div class="nf-lock-message" id="nfLockMessage"></div>
+
+        <div class="nf-lock-actions">
+          <button class="btn btn-main" id="nfLockSubmit" type="button">
+            Save Password
+          </button>
+          <button class="nf-lock-reset" id="nfLockSkip" type="button">
+            Skip for now
+          </button>
+          <button class="nf-lock-reset" id="nfLockReset" type="button">
+            Reset password on this device
+          </button>
+        </div>
+      </div>
+    </aside>
     <div class="top-brand">
       <div class="brand-glow">
         <h1>NutriFinance</h1>
@@ -2043,6 +2196,17 @@
       const currencyRate = document.getElementById("currencyRate");
       const currencyResult = document.getElementById("currencyResult");
       const SECTION_TOGGLE_KEY = "nutriFinanceSectionToggles_v1";
+      const NF_LOCK_KEY = "nutriFinanceLockHash_v1";
+
+      const nfLockPanel = document.getElementById("nfLockPanel");
+      const nfLockTitle = document.getElementById("nfLockTitle");
+      const nfLockSubtitle = document.getElementById("nfLockSubtitle");
+      const nfLockPassword = document.getElementById("nfLockPassword");
+      const nfLockConfirm = document.getElementById("nfLockConfirm");
+      const nfLockMessage = document.getElementById("nfLockMessage");
+      const nfLockSubmit = document.getElementById("nfLockSubmit");
+      const nfLockSkip = document.getElementById("nfLockSkip");
+      const nfLockReset = document.getElementById("nfLockReset");
 
       let store = loadStore();
 
@@ -2069,6 +2233,88 @@
 
       function saveToggleStore(toggleState) {
         localStorage.setItem(SECTION_TOGGLE_KEY, JSON.stringify(toggleState));
+      }
+      async function hashNutriFinancePassword(password) {
+        const encoded = new TextEncoder().encode(`NutriFinance::${password}`);
+        const digest = await crypto.subtle.digest("SHA-256", encoded);
+        return Array.from(new Uint8Array(digest))
+          .map((byte) => byte.toString(16).padStart(2, "0"))
+          .join("");
+      }
+
+      function openNutriFinanceLock() {
+        const hasPassword = Boolean(localStorage.getItem(NF_LOCK_KEY));
+
+        document.body.classList.add("nf-locked");
+        nfLockPanel.setAttribute("aria-hidden", "false");
+
+        nfLockTitle.textContent = hasPassword
+          ? "Unlock NutriFinance"
+          : "Lock NutriFinance";
+
+        nfLockSubtitle.textContent = hasPassword
+          ? "Enter your password to open your finance dashboard."
+          : "Create a local password to protect your finance dashboard on this device.";
+
+        nfLockSubmit.textContent = hasPassword ? "Unlock" : "Save Password";
+        nfLockConfirm.style.display = hasPassword ? "none" : "block";
+        nfLockSkip.style.display = hasPassword ? "none" : "block";
+        nfLockReset.style.display = hasPassword ? "block" : "none";
+        nfLockPassword.value = "";
+        nfLockConfirm.value = "";
+        nfLockMessage.textContent = "";
+
+        setTimeout(() => nfLockPassword.focus(), 250);
+      }
+
+      function closeNutriFinanceLock() {
+        document.body.classList.remove("nf-locked");
+        nfLockPanel.setAttribute("aria-hidden", "true");
+        nfLockPassword.value = "";
+        nfLockConfirm.value = "";
+        nfLockMessage.textContent = "";
+      }
+
+      async function handleNutriFinanceLockSubmit() {
+        const existingHash = localStorage.getItem(NF_LOCK_KEY);
+        const password = nfLockPassword.value.trim();
+        const confirmPassword = nfLockConfirm.value.trim();
+
+        if (password.length < 4) {
+          nfLockMessage.textContent = "Use at least 4 characters.";
+          return;
+        }
+
+        if (!existingHash && password !== confirmPassword) {
+          nfLockMessage.textContent = "Passwords do not match.";
+          return;
+        }
+
+        const hash = await hashNutriFinancePassword(password);
+
+        if (!existingHash) {
+          localStorage.setItem(NF_LOCK_KEY, hash);
+          closeNutriFinanceLock();
+          return;
+        }
+
+        if (hash !== existingHash) {
+          nfLockMessage.textContent = "Wrong password.";
+          return;
+        }
+
+        closeNutriFinanceLock();
+      }
+
+      function resetNutriFinanceLock() {
+        const confirmed = confirm(
+          "Reset NutriFinance password on this device? This will not delete your finance data.",
+        );
+
+        if (!confirmed) return;
+
+        localStorage.removeItem(NF_LOCK_KEY);
+        openNutriFinanceLock();
       }
 
       function makeEmptyIncome() {
@@ -4218,6 +4464,18 @@
       guideCloseBtn.addEventListener("click", closeGuideDrawer);
       guideOverlay.addEventListener("click", closeGuideDrawer);
 
+      nfLockSubmit.addEventListener("click", handleNutriFinanceLockSubmit);
+      nfLockSkip.addEventListener("click", closeNutriFinanceLock);
+      nfLockReset.addEventListener("click", resetNutriFinanceLock);
+
+      nfLockPassword.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") handleNutriFinanceLockSubmit();
+      });
+
+      nfLockConfirm.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") handleNutriFinanceLockSubmit();
+      });
+
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && guideDrawer.classList.contains("open")) {
           closeGuideDrawer();
@@ -4435,6 +4693,7 @@
       monthPicker.value = getDefaultMonthValue();
       ensureMonthData(monthPicker.value);
       renderMonth();
+      openNutriFinanceLock();
       initializeSectionToggles();
       calculateInvestmentGrowth();
       calculateSavingsPlan();
