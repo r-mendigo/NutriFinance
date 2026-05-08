@@ -1516,7 +1516,7 @@
           <input
             type="file"
             id="importFile"
-            accept=".csv"
+            accept=".json,.csv"
             style="display: none"
           />
         </div>
@@ -3983,6 +3983,31 @@
 
         reader.onload = function (event) {
           const text = event.target.result;
+
+          if (file.name.toLowerCase().endsWith(".json")) {
+            try {
+              const backup = JSON.parse(text);
+
+              if (backup?.app === "NutriFinance" && backup?.data) {
+                store = backup.data;
+                saveStore();
+
+                if (backup.selectedMonth && store[backup.selectedMonth]) {
+                  monthPicker.value = backup.selectedMonth;
+                }
+
+                renderMonth();
+                return;
+              }
+
+              alert("This JSON file is not a valid NutriFinance backup.");
+              return;
+            } catch {
+              alert("Import failed. This JSON file could not be read.");
+              return;
+            }
+          }
+
           const lines = text.split(/\r?\n/).filter(Boolean);
 
           if (lines.length <= 1) return;
