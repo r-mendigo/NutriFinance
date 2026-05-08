@@ -1455,6 +1455,75 @@
         text-align: left;
         cursor: pointer;
       }
+      /* =========================================================
+   NUTRIFINANCE SECURITY TOOLS CARD 10
+   ========================================================= */
+      .nf-security-card {
+        margin-top: 16px;
+        padding: 15px;
+        border-radius: 16px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 253, 248, 0.96),
+          rgba(244, 255, 249, 0.96)
+        );
+        border: 1px solid rgba(212, 175, 55, 0.28);
+        box-shadow: 0 8px 20px rgba(20, 30, 40, 0.06);
+      }
+
+      .nf-security-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .nf-security-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #fff3b3, #d4af37);
+        box-shadow: 0 8px 18px rgba(212, 175, 55, 0.18);
+        font-size: 1.25rem;
+      }
+
+      .nf-security-card h3 {
+        font-size: 1rem;
+        margin: 0;
+      }
+
+      .nf-security-card p {
+        color: var(--muted);
+        font-size: 0.86rem;
+        line-height: 1.4;
+        margin-bottom: 12px;
+      }
+
+      .nf-security-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .nf-security-actions .btn {
+        width: 100%;
+        min-height: 42px;
+        padding: 9px 8px;
+        font-size: 0.78rem;
+        border-radius: 13px;
+      }
+
+      .nf-security-actions .nf-lock-now-btn {
+        grid-column: 1 / -1;
+      }
+
+      @media (max-width: 640px) {
+        .nf-security-actions {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1485,6 +1554,14 @@
           type="password"
           placeholder="Confirm password"
           autocomplete="new-password"
+        />
+        <input
+          class="nf-lock-input"
+          id="nfLockNew"
+          type="password"
+          placeholder="New password"
+          autocomplete="new-password"
+          style="display: none"
         />
 
         <div class="nf-lock-message" id="nfLockMessage"></div>
@@ -1882,6 +1959,32 @@
           </div>
         </div>
 
+        <div class="nf-security-card" id="securitySection">
+          <div class="nf-security-head">
+            <div class="nf-security-icon">🛡️</div>
+            <div>
+              <h3>Security & Privacy</h3>
+            </div>
+          </div>
+          <p>Manage your local NutriFinance password on this device.</p>
+
+          <div class="nf-security-actions">
+            <button class="btn btn-main" id="changePasswordBtn" type="button">
+              Change Password
+            </button>
+            <button class="btn btn-clear" id="disablePasswordBtn" type="button">
+              Disable Password
+            </button>
+            <button
+              class="btn btn-calc nf-lock-now-btn"
+              id="lockNowBtn"
+              type="button"
+            >
+              Lock Now
+            </button>
+          </div>
+        </div>
+
         <div class="networth-wrap">
           <h3>Net Worth Tracker</h3>
 
@@ -2203,10 +2306,16 @@
       const nfLockSubtitle = document.getElementById("nfLockSubtitle");
       const nfLockPassword = document.getElementById("nfLockPassword");
       const nfLockConfirm = document.getElementById("nfLockConfirm");
+      const nfLockNew = document.getElementById("nfLockNew");
       const nfLockMessage = document.getElementById("nfLockMessage");
       const nfLockSubmit = document.getElementById("nfLockSubmit");
       const nfLockSkip = document.getElementById("nfLockSkip");
       const nfLockReset = document.getElementById("nfLockReset");
+      const changePasswordBtn = document.getElementById("changePasswordBtn");
+      const disablePasswordBtn = document.getElementById("disablePasswordBtn");
+      const lockNowBtn = document.getElementById("lockNowBtn");
+
+      let nfLockMode = "setup";
 
       let store = loadStore();
 
@@ -2242,27 +2351,68 @@
           .join("");
       }
 
-      function openNutriFinanceLock() {
+      function openNutriFinanceLock(mode = "auto") {
         const hasPassword = Boolean(localStorage.getItem(NF_LOCK_KEY));
+
+        nfLockMode =
+          mode === "auto" ? (hasPassword ? "unlock" : "setup") : mode;
 
         document.body.classList.add("nf-locked");
         nfLockPanel.setAttribute("aria-hidden", "false");
 
-        nfLockTitle.textContent = hasPassword
-          ? "Unlock NutriFinance"
-          : "Lock NutriFinance";
-
-        nfLockSubtitle.textContent = hasPassword
-          ? "Enter your password to open your finance dashboard."
-          : "Create a local password to protect your finance dashboard on this device.";
-
-        nfLockSubmit.textContent = hasPassword ? "Unlock" : "Save Password";
-        nfLockConfirm.style.display = hasPassword ? "none" : "block";
-        nfLockSkip.style.display = hasPassword ? "none" : "block";
-        nfLockReset.style.display = hasPassword ? "block" : "none";
         nfLockPassword.value = "";
         nfLockConfirm.value = "";
+        nfLockNew.value = "";
         nfLockMessage.textContent = "";
+
+        nfLockConfirm.style.display = "none";
+        nfLockNew.style.display = "none";
+        nfLockSkip.style.display = "none";
+        nfLockReset.style.display = "none";
+
+        if (nfLockMode === "setup") {
+          nfLockTitle.textContent = "Lock NutriFinance";
+          nfLockSubtitle.textContent =
+            "Create a local password to protect your finance dashboard on this device.";
+          nfLockPassword.placeholder = "Enter password";
+          nfLockConfirm.placeholder = "Confirm password";
+          nfLockConfirm.style.display = "block";
+          nfLockSkip.textContent = "Skip for now";
+          nfLockSkip.style.display = "block";
+          nfLockSubmit.textContent = "Save Password";
+        }
+
+        if (nfLockMode === "unlock") {
+          nfLockTitle.textContent = "Unlock NutriFinance";
+          nfLockSubtitle.textContent =
+            "Enter your password to open your finance dashboard.";
+          nfLockPassword.placeholder = "Enter password";
+          nfLockSubmit.textContent = "Unlock";
+        }
+
+        if (nfLockMode === "change") {
+          nfLockTitle.textContent = "Change Password";
+          nfLockSubtitle.textContent =
+            "Enter your current password, then choose a new one.";
+          nfLockPassword.placeholder = "Current password";
+          nfLockNew.placeholder = "New password";
+          nfLockConfirm.placeholder = "Confirm new password";
+          nfLockNew.style.display = "block";
+          nfLockConfirm.style.display = "block";
+          nfLockSkip.textContent = "Cancel";
+          nfLockSkip.style.display = "block";
+          nfLockSubmit.textContent = "Change Password";
+        }
+
+        if (nfLockMode === "disable") {
+          nfLockTitle.textContent = "Disable Password";
+          nfLockSubtitle.textContent =
+            "Enter your current password before removing password protection.";
+          nfLockPassword.placeholder = "Current password";
+          nfLockSkip.textContent = "Cancel";
+          nfLockSkip.style.display = "block";
+          nfLockSubmit.textContent = "Disable Password";
+        }
 
         setTimeout(() => nfLockPassword.focus(), 250);
       }
@@ -2279,31 +2429,71 @@
         const existingHash = localStorage.getItem(NF_LOCK_KEY);
         const password = nfLockPassword.value.trim();
         const confirmPassword = nfLockConfirm.value.trim();
+        const newPassword = nfLockNew.value.trim();
 
-        if (password.length < 4) {
-          nfLockMessage.textContent = "Use at least 4 characters.";
-          return;
-        }
+        if (nfLockMode === "setup") {
+          if (password.length < 4) {
+            nfLockMessage.textContent = "Use at least 4 characters.";
+            return;
+          }
 
-        if (!existingHash && password !== confirmPassword) {
-          nfLockMessage.textContent = "Passwords do not match.";
-          return;
-        }
+          if (password !== confirmPassword) {
+            nfLockMessage.textContent = "Passwords do not match.";
+            return;
+          }
 
-        const hash = await hashNutriFinancePassword(password);
-
-        if (!existingHash) {
+          const hash = await hashNutriFinancePassword(password);
           localStorage.setItem(NF_LOCK_KEY, hash);
           closeNutriFinanceLock();
           return;
         }
 
-        if (hash !== existingHash) {
-          nfLockMessage.textContent = "Wrong password.";
+        if (!existingHash) {
+          nfLockMessage.textContent = "No password is set yet.";
           return;
         }
 
-        closeNutriFinanceLock();
+        if (password.length < 4) {
+          nfLockMessage.textContent = "Enter your current password.";
+          return;
+        }
+
+        const currentHash = await hashNutriFinancePassword(password);
+
+        if (currentHash !== existingHash) {
+          nfLockMessage.textContent = "Wrong current password.";
+          return;
+        }
+
+        if (nfLockMode === "unlock") {
+          closeNutriFinanceLock();
+          return;
+        }
+
+        if (nfLockMode === "disable") {
+          localStorage.removeItem(NF_LOCK_KEY);
+          closeNutriFinanceLock();
+          alert("NutriFinance password disabled on this device.");
+          return;
+        }
+
+        if (nfLockMode === "change") {
+          if (newPassword.length < 4) {
+            nfLockMessage.textContent =
+              "Use at least 4 characters for new password.";
+            return;
+          }
+
+          if (newPassword !== confirmPassword) {
+            nfLockMessage.textContent = "New passwords do not match.";
+            return;
+          }
+
+          const newHash = await hashNutriFinancePassword(newPassword);
+          localStorage.setItem(NF_LOCK_KEY, newHash);
+          closeNutriFinanceLock();
+          alert("NutriFinance password changed.");
+        }
       }
 
       function resetNutriFinanceLock() {
@@ -4464,15 +4654,41 @@
       guideCloseBtn.addEventListener("click", closeGuideDrawer);
       guideOverlay.addEventListener("click", closeGuideDrawer);
 
+      changePasswordBtn.addEventListener("click", () => {
+        if (!localStorage.getItem(NF_LOCK_KEY)) {
+          openNutriFinanceLock("setup");
+          return;
+        }
+
+        openNutriFinanceLock("change");
+      });
+
+      disablePasswordBtn.addEventListener("click", () => {
+        if (!localStorage.getItem(NF_LOCK_KEY)) {
+          alert("No password is currently set.");
+          return;
+        }
+
+        openNutriFinanceLock("disable");
+      });
+
+      lockNowBtn.addEventListener("click", () => {
+        openNutriFinanceLock("auto");
+      });
+
       nfLockSubmit.addEventListener("click", handleNutriFinanceLockSubmit);
       nfLockSkip.addEventListener("click", closeNutriFinanceLock);
-      nfLockReset.addEventListener("click", resetNutriFinanceLock);
+      /*nfLockReset.addEventListener("click", resetNutriFinanceLock);*/
 
       nfLockPassword.addEventListener("keydown", (event) => {
         if (event.key === "Enter") handleNutriFinanceLockSubmit();
       });
 
       nfLockConfirm.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") handleNutriFinanceLockSubmit();
+      });
+
+      nfLockNew.addEventListener("keydown", (event) => {
         if (event.key === "Enter") handleNutriFinanceLockSubmit();
       });
 
@@ -4634,6 +4850,7 @@
 
           move(document.getElementById("savingsCalcSection"), sections.tools);
           move(document.getElementById("currencySection"), sections.tools);
+          move(document.getElementById("securitySection"), sections.tools);
 
           existingSections = Array.from(
             document.querySelectorAll(".nf-mobile-section"),
