@@ -1157,8 +1157,9 @@
           line-height: 1.1 !important;
         }
 
+        .nf-mobile-section[data-nf-section="month"] #copyPreviousMonthBtn,
         .nf-mobile-section[data-nf-section="month"] #loadMonthBtn {
-          grid-column: 1 / -1 !important;
+          grid-column: auto !important;
         }
       }
       /* =========================================================
@@ -1487,6 +1488,9 @@
           </button>
           <button class="btn btn-main" id="currentMonthBtn" type="button">
             Present Month
+          </button>
+          <button class="btn btn-main" id="copyPreviousMonthBtn" type="button">
+            Copy Previous Month
           </button>
           <button class="btn btn-calc" id="loadMonthBtn" type="button">
             Explain My Numbers
@@ -1960,6 +1964,9 @@
       const prevMonthBtn = document.getElementById("prevMonthBtn");
       const currentMonthBtn = document.getElementById("currentMonthBtn");
       const loadMonthBtn = document.getElementById("loadMonthBtn");
+      const copyPreviousMonthBtn = document.getElementById(
+        "copyPreviousMonthBtn",
+      );
       const savingsTargetInput = document.getElementById("savingsTargetInput");
 
       const incomeSubtotalEl = document.getElementById("incomeSubtotal");
@@ -3702,6 +3709,37 @@
         monthPicker.value = getDefaultMonthValue();
         loadSelectedMonth();
       }
+      function copyPreviousMonthEntries() {
+        syncFromDOM();
+
+        const currentKey = getCurrentMonthKey();
+        const previousKey = getPreviousMonthKey(currentKey);
+
+        ensureMonthData(currentKey);
+
+        if (!store[previousKey]) {
+          alert(`No saved data found for ${formatMonthLabel(previousKey)}.`);
+          return;
+        }
+
+        const previousData = normalizeMonthData(store[previousKey]);
+        const currentData = getCurrentMonthData();
+
+        const confirmed = confirm(
+          `Copy income and expenses from ${formatMonthLabel(previousKey)} into ${formatMonthLabel(currentKey)}?`,
+        );
+
+        if (!confirmed) return;
+
+        currentData.incomes = JSON.parse(JSON.stringify(previousData.incomes));
+        currentData.expenses = JSON.parse(
+          JSON.stringify(previousData.expenses),
+        );
+        currentData.balance = 0;
+
+        saveStore();
+        renderMonth();
+      }
 
       function clearCurrentMonth() {
         const key = getCurrentMonthKey();
@@ -4175,6 +4213,7 @@
       clearBtn.addEventListener("click", clearCurrentMonth);
       prevMonthBtn.addEventListener("click", goToPreviousMonth);
       currentMonthBtn.addEventListener("click", goToPresentMonth);
+      copyPreviousMonthBtn.addEventListener("click", copyPreviousMonthEntries);
       loadMonthBtn.addEventListener("click", openGuideDrawer);
       guideCloseBtn.addEventListener("click", closeGuideDrawer);
       guideOverlay.addEventListener("click", closeGuideDrawer);
