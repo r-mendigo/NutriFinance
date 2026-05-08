@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NutriFinance - Mindful Spending</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230f8b6d'/%3E%3Ctext x='50' y='62' font-size='52' text-anchor='middle' fill='%23f1d77a'%3E₦%3C/text%3E%3C/svg%3E"
+    />
     <style>
       :root {
         --bg-1: #eef7ee;
@@ -1214,6 +1218,40 @@
           ) !important;
 
           box-shadow: 0 4px 10px rgba(181, 72, 72, 0.18) !important;
+        }
+      }
+      @media (max-width: 640px) {
+        body.nf-guide-open .nf-mobile-tabs {
+          display: none !important;
+        }
+      }
+
+      /* =========================================================
+   NUTRIFINANCE iPHONE REMOVE PILL FIX 05
+   ========================================================= */
+      @media (max-width: 640px) {
+        .nf-mobile-section .btn-remove {
+          width: auto !important;
+          min-width: 42px !important;
+          height: 34px !important;
+          padding: 0 14px !important;
+          margin: 8px 0 4px auto !important;
+
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+
+          border-radius: 999px !important;
+          font-size: 0.9rem !important;
+          font-weight: 900 !important;
+          line-height: 1 !important;
+
+          background: linear-gradient(
+            135deg,
+            #c85c5c 0%,
+            #a83f3f 100%
+          ) !important;
+          box-shadow: 0 4px 10px rgba(181, 72, 72, 0.16) !important;
         }
       }
     </style>
@@ -3551,12 +3589,14 @@
 
       function openGuideDrawer() {
         renderCalculationGuide();
+        document.body.classList.add("nf-guide-open");
         guideOverlay.classList.add("open");
         guideDrawer.classList.add("open");
         guideDrawer.setAttribute("aria-hidden", "false");
       }
 
       function closeGuideDrawer() {
+        document.body.classList.remove("nf-guide-open");
         guideOverlay.classList.remove("open");
         guideDrawer.classList.remove("open");
         guideDrawer.setAttribute("aria-hidden", "true");
